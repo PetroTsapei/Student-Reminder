@@ -14,3 +14,6 @@ gen### Example user template template
 *.iml
 out
 gen
+src/api/
+src/components/
+src/stores/
