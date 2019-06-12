@@ -1,27 +1,21 @@
-import React from 'react';
-import { Route, Router } from 'react-router';
+import React, { Fragment } from 'react';
+import { Route } from 'react-router-dom';
 import MainRouter from './routes';
-import { createBrowserHistory } from 'history';
-import { Provider } from 'mobx-react';
+import Header from '../src/components/global/Header';
+import { inject, observer } from 'mobx-react';
 
-/* stores */
+function App(props) {
+  const unavaliableLinks = ['/', '/sign-up'];
 
-
-const stores = {};
-const history = createBrowserHistory();
-
-function App() {
   return (
-    <Provider { ...stores }>
-      <Router history={history}>
-        <div className="App">
-          <main>
-            <Route component={MainRouter} />
-          </main>
-        </div>
-      </Router>
-    </Provider>
+    <Fragment>
+      {
+        (!unavaliableLinks.includes(props.routing.location.pathname)) &&
+          <Header/>
+      }
+      <Route component={MainRouter} />
+    </Fragment>
   );
 }
 
-export default App;
+export default inject('routing')(observer(App));

@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
-import { withRouter } from 'react-router';
-import { Switch } from 'react-router-dom';
+import { withRouter, Switch } from 'react-router';
+
+import PublicRoutes from './PublicRoutes';
+import PrivateRoutes from './PrivateRoutes';
 
 class ScrollToTop extends Component {
   componentDidUpdate(prevProps) {
@@ -24,7 +26,8 @@ class MainRouter extends Component {
     return (
       <ScrollToTopWrapper>
         <Switch>
-
+          { false && PrivateRoutes() }
+          { PublicRoutes() }
         </Switch>
       </ScrollToTopWrapper>
     )
