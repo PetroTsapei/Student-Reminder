@@ -4,13 +4,13 @@ const personRoute = require('./routes/person');
 const customerRoute = require('./routes/customer');
 const bodyParser = require('body-parser');
 
+app.use(bodyParser.json());
 app.use(personRoute);
 app.use(customerRoute);
 app.use((req, res, next) => {
   console.log(`${new Date().toString()} => ${req.originalUrl}`, req.body);
   next()
 });
-app.use(bodyParser.json());
 
 // Handler for 404
 app.use((req, res, next) => {
