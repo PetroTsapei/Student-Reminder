@@ -1,9 +1,17 @@
 const UserModel = require('../models/user');
+const mongoCodes = require('../constants/mongoCodes');
+const tokenVerify = require('../helpers/tokenVerify');
+const roleVerify = require('../helpers/roleVerify');
 const jwt = require('jsonwebtoken');
+const encrypt = require('../helpers/encrypt');
 
 exports.sign_up = function (req, res) {
-  if (!req.body) {
-    return res.status(400).send('Request body is missing');
+  if (req.body.password) req.body.password = encrypt(req.body.password);
+  if (req.body.role === 'admin') {
+    tokenVerify(req, res, () => {
+      roleVerify(req, res, () => {}, 'admin');
+    });
+    if (!req.role) return;
   }
 
   let model = new UserModel(req.body);
@@ -13,10 +21,14 @@ exports.sign_up = function (req, res) {
         return res.status(500).send(doc);
       }
 
-      res.status(201).send(doc);
+      res.status(201).json({
+        message: "Your account created, please write authentication code",
+        user_info: doc
+      });
     })
     .catch(err => {
-      res.status(500).json(err);
+      if (err.code === mongoCodes.notRequired) res.status(400).json({ message: "User already created" });
+      else res.status(500).json(err);
     })
 };
 
@@ -34,21 +46,17 @@ exports.sign_in = function (req, res) {
     return res.status(400).send('Password is missing');
   }
 
-  UserModel.findOne({ phoneNumber, password })
+  UserModel.findOne({ phoneNumber, password: encrypt(password) })
     .then(doc => {
       if (doc) {
-        const role = doc.isAdmin ? 'admin' : doc.isTeacher ? 'teacher' : 'student';
-
-        jwt.sign({ user: doc }, role, (err, token) => {
+        jwt.sign({ user: doc }, doc.role, (err, token) => {
           if (err) res.status(500).json(err);
 
           res.json({
             token,
-            role
+            role: doc.role
           });
         });
-
-        res.json(doc);
       } else res.status(400).json({ message: "Not Found any active account" });
     })
     .catch(err => {

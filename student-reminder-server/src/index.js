@@ -3,12 +3,14 @@ const app = express();
 const personRoute = require('./routes/person');
 const customerRoute = require('./routes/customer');
 const userRoute = require('./routes/user');
+const groupRoute = require('./routes/group');
 const bodyParser = require('body-parser');
 require('dotenv').config();
 
 app.use(bodyParser.json());
 app.use(personRoute);
 app.use(customerRoute);
+app.use(groupRoute);
 app.use(userRoute);
 app.use((req, res, next) => {
   console.log(`${new Date().toString()} => ${req.originalUrl}`, req.body);
