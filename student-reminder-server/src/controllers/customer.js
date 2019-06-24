@@ -1,4 +1,4 @@
-const CustomerModel = require('../models/customer.model');
+const CustomerModel = require('../models/customer');
 
 exports.post = function (req, res) {
   if (!req.body) {

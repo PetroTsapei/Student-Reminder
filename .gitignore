@@ -16,3 +16,4 @@ out
 gen
 student-reminder-web/node_modules/
 student-reminder-server/node_modules
+student-reminder-server/.env
