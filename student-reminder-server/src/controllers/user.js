@@ -21,9 +21,13 @@ exports.sign_up = function (req, res) {
         return res.status(500).send(doc);
       }
 
-      res.status(201).json({
-        message: "Your account created, please write authentication code",
-        user_info: doc
+      model.sendAuthyToken(error => {
+        if (error) res.status(400).json({ error: error.message });
+
+        res.status(201).json({
+          message: "Your account created, please write authentication code",
+          user_info: doc
+        });
       });
     })
     .catch(err => {

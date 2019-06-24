@@ -84,8 +84,7 @@ UserSchema.methods.verifyAuthyToken = function(otp, cb) {
 };
 
 // Send a text message via twilio to this user
-UserSchema.methods.sendMessage =
-  function(message, successCallback, errorCallback) {
+UserSchema.methods.sendMessage = function(message, successCallback, errorCallback) {
     const self = this;
     const toNumber = `+${self.countryCode}${self.phone}`;
 
