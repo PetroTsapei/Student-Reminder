@@ -38,32 +38,93 @@ exports.sign_up = function (req, res) {
 
 exports.sign_in = function (req, res) {
   const {
-    phoneNumber,
+    countryCode,
+    phone,
     password
   } = req.body;
 
-  if (!phoneNumber) {
-    return res.status(400).send('Phone number is missing');
-  }
+  if (!countryCode) return res.status(400).send('countryCode is missing');
+  if (!phone) return res.status(400).send('phone is missing');
+  if (!password) return res.status(400).send('Password is missing');
 
-  if (!password) {
-    return res.status(400).send('Password is missing');
-  }
-
-  UserModel.findOne({ phoneNumber, password: encrypt(password) })
+  UserModel.findOne({ countryCode, phone, password: encrypt(password) })
     .then(doc => {
       if (doc) {
         jwt.sign({ user: doc }, doc.role, (err, token) => {
           if (err) res.status(500).json(err);
 
-          res.json({
-            token,
-            role: doc.role
-          });
+          if (!doc.verified) {
+            res.json({
+              id: doc._id,
+              verified: doc.verified
+            });
+
+          } else {
+            res.json({
+              token,
+              role: doc.role,
+              verified: doc.verified
+            });
+          }
         });
-      } else res.status(400).json({ message: "Not Found any active account" });
+      } else res.status(400).json({ error: "Not Found any active account" });
     })
     .catch(err => {
       res.status(500).json(err);
     })
 };
+
+exports.resend = function(req, res) {
+  UserModel.findById(req.params.id)
+    .then(user => {
+      if (!user) return res.status(400).json({ error: "Not Found any active account" });
+
+      user.sendAuthyToken(postSend);
+
+      function postSend(error) {
+        if (error) return res.status(400).json({ error });
+
+        res.json({ message: "Code re-send" });
+      }
+    })
+    .catch(err => {
+      res.status(500).json({ error: err.message || err });
+    })
+}
+
+exports.verify = function(req, res) {
+  let user = {};
+
+  UserModel.findById(req.params.id)
+    .then(doc => {
+      if (!user) return res.status(400).json({ error: "Not Found any active account" });
+
+      user = doc;
+      user.verifyAuthyToken(req.body.code, postVerify);
+
+      function postVerify(err) {
+        if (err) return res.status(400).json({ error: "The token you entered was invalid - please retry" });
+
+        user.verified = true;
+        user.save(postSave);
+      }
+
+      function postSave(err) {
+        if (err) return res.status(400).json({ error: 'There was a problem validating your account - please enter your token again' });
+
+        user.sendMessage("You did it! Signup complete :)", function() {
+          // TODO implement token generate
+
+          res.status(200).json({
+
+          });
+          
+        }, function(err) {
+          res.status(400).json({ error: "You are signed up, but we could not send you a message. Our bad" });
+        })
+      }
+    })
+    .catch(err => {
+      res.status(500).json({ error: err.message || err });
+    })
+}
