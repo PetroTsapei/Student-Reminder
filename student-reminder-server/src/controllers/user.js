@@ -77,7 +77,7 @@ exports.sign_in = function (req, res) {
 exports.resend = function(req, res) {
   UserModel.findById(req.params.id)
     .then(user => {
-      if (!user) return res.status(400).json({ error: "Not Found any active account" });
+      if (!user) return res.status(404).json({ error: "Not Found any active account" });
 
       user.sendAuthyToken(postSend);
 
@@ -97,13 +97,13 @@ exports.verify = function(req, res) {
 
   UserModel.findById(req.params.id)
     .then(doc => {
-      if (!user) return res.status(400).json({ error: "Not Found any active account" });
+      if (!user) return res.status(404).json({ error: "Not Found any active account" });
 
       user = doc;
       user.verifyAuthyToken(req.body.code, postVerify);
 
       function postVerify(err) {
-        if (err) return res.status(400).json({ error: "The token you entered was invalid - please retry" });
+        if (err) return res.status(400).json({ error: "The code you entered was invalid - please retry" });
 
         user.verified = true;
         user.save(postSave);
@@ -113,13 +113,18 @@ exports.verify = function(req, res) {
         if (err) return res.status(400).json({ error: 'There was a problem validating your account - please enter your token again' });
 
         user.sendMessage("You did it! Signup complete :)", function() {
-          // TODO implement token generate
 
-          res.status(200).json({
-
+          jwt.sign({ user }, user.role, (err, token) => {
+            if (err) res.status(500).json(err);
+            
+            res.status(200).json({
+              token,
+              role: user.role,
+              verified: user.verified
+            });
           });
-          
         }, function(err) {
+          console.log(err);
           res.status(400).json({ error: "You are signed up, but we could not send you a message. Our bad" });
         })
       }

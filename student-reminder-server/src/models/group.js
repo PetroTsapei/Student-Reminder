@@ -8,11 +8,13 @@ const GroupSchema = new mongoose.Schema({
   },
   dateOfCreation: {
     type: Date,
-    required: true
+    required: true,
+    max: function() { return this.releaseDate }
   },
   releaseDate: {
     type: Date,
-    required: true
+    required: true,
+    min: function() { return this.dateOfCreation }
   },
   groupCurator: {
     type: String,
