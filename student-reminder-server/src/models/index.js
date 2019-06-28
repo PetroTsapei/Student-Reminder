@@ -6,6 +6,6 @@ const user = "";
 const password = "";
 
 mongoose.set('useCreateIndex', true);
-mongoose.connect(`mongodb://${user}:${password}@${server}/${database}`, { useNewUrlParser: true });
+mongoose.connect(`mongodb://${user}:${password}@${server}/${database}`, { useNewUrlParser: true, useFindAndModify: false });
 
 module.exports = mongoose;
