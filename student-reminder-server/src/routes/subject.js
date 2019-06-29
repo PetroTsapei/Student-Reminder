@@ -9,7 +9,7 @@ adminVerify = (req, res, next) => roleVerify(req, res, next, 'admin');
 
 router.post('/api/subjects', [tokenVerify, bodyValidator, adminVerify], SubjectController.post);
 router.put('/api/subjects/:id', [tokenVerify, bodyValidator, adminVerify], SubjectController.put);
-router.get('/api/subjects', [tokenVerify, adminVerify], SubjectController.getAll);
+router.get('/api/subjects', [tokenVerify, roleVerify], SubjectController.getAll);
 router.delete('/api/subjects/:id', [tokenVerify, adminVerify], SubjectController.delete);
 
 module.exports = router;
