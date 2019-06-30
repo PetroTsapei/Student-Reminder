@@ -1,4 +1,5 @@
 const mongoose = require('./index');
+const GroupModel = require('../models/group');
 require('dotenv').config();
 
 // Create authenticated Authy and Twilio API clients
@@ -31,7 +32,6 @@ const UserSchema = new mongoose.Schema({
   groupName: {
     type: String,
     required: function() { return this.role === 'student' },
-    unique: true
   },
   fullName: {
     type: String,
@@ -43,6 +43,15 @@ const UserSchema = new mongoose.Schema({
     enum: ["admin", "teacher", "student"]
   }
 });
+
+UserSchema.pre('validate', function (next) {
+  GroupModel.findOne({ groupName: this.groupName })
+    .then(doc => {
+      if (!doc && self.groupName) next({error: "Group not found"});
+      else next();
+    })
+    .catch(error => next({error}))
+})
 
 UserSchema.methods.sendAuthyToken = function(cb) {
   var self = this;
