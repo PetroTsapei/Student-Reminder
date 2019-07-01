@@ -31,13 +31,20 @@ const GroupSchema = new mongoose.Schema({
 
 GroupSchema.pre('validate', function (next) {
   let self = this;
-  // TODO fix circlic
-console.log(UserModel);
+
   UserModel.findOne({ _id: self.groupCurator, role: "teacher" })
     .then(doc => {
-      console.log(doc);
+      if (!doc && self.groupCurator) next({error: "Courator not found"});
+      else {
+        UserModel.findOneAndUpdate({ _id: self.groupLeader, role: "student" }, { groupLeader: true })
+          .then(doc => {
+            if (!doc && self.groupLeader) next({error: "Group leader not found"});
+            else next();
+          })
+          .catch(error => next({error}))
+      }
     })
-    .catch(error => console.log(error))
+    .catch(error => next({error}))
 })
 
 module.exports = mongoose.model('Group', GroupSchema);

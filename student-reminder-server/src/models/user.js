@@ -1,5 +1,4 @@
 const mongoose = require('./index');
-const GroupModel = require('./group');
 const ObjectId = mongoose.Schema.Types.ObjectId;
 require('dotenv').config();
 
@@ -42,17 +41,9 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
     enum: ["admin", "teacher", "student"]
-  }
+  },
+  groupLeader: Boolean
 });
-
-UserSchema.pre('validate', function (next) {
-  GroupModel.findById(this.group)
-    .then(doc => {
-      if (!doc && this.group) next({error: "Group not found"});
-      else next();
-    })
-    .catch(error => next({error}))
-})
 
 UserSchema.methods.sendAuthyToken = function(cb) {
   var self = this;
