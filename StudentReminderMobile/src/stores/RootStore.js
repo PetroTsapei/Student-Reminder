@@ -9,7 +9,7 @@ const hydrate = create({
 });
 
 export class RootStore {
-  authStore = new ObservableAuthStoreContext()
+  authStore = new ObservableAuthStoreContext(this)
 
   constructor() {
     hydrate("authStore", this.authStore);

@@ -1,5 +1,20 @@
 import React, { useContext } from 'react';
-import {Text, View, AlertIOS, Button} from 'react-native';
+import {Text, View, AlertIOS} from 'react-native';
+import { 
+  Container, 
+  Header, 
+  Content, 
+  Form, 
+  Item, 
+  Input, 
+  Label, 
+  Title,
+  Left,
+  Right,
+  Body,
+  Button,
+  Icon
+} from 'native-base';
 import {observer} from 'mobx-react-lite';
 import { ObservableAuthStoreContext } from '../stores/ObservableAuthStrore';
 import PhoneAuth from 'react-native-phone-auth-component';
@@ -13,19 +28,55 @@ export const SignUp = observer(({ history }) => {
   function signUpForm() {
     return (
       <>
-        <Text>{authStore.count}</Text>
-        <Button  title="increment" onPress={() => history.push('/sign-up/phone')}/>
+        <Header>
+          <Left>
+            <Button transparent onPress={() => history.goBack()}>
+              <Icon name='ios-arrow-back' />
+            </Button>
+          </Left>
+          <Body>
+            <Title>
+              Sign Up
+            </Title>
+          </Body>
+          <Right />
+        </Header>
+        <Content>
+          <Form style={styles.form}>
+            <Item floatingLabel>
+              {/* <Icon name='home' /> */}
+              <Label>Phone Number</Label>
+              <Input 
+                keyboardType={'phone-pad'}
+                returnKeyType='done'
+                autoCorrect={false}
+              />
+            </Item>
+            <Item floatingLabel last>
+              <Label>Password</Label>
+              <Input 
+                secureTextEntry={true}
+              />
+            </Item>
+            <Button rounded style={styles.buttonSignIn}>
+              <Text>Sign In</Text>
+            </Button>
+          </Form>
+        </Content>
       </>
     )
   }
 
   function tabs() {
     switch(history.location.pathname) {
-      case '/' : return signUpForm()
+      case '/sign-up' : return signUpForm()
       case '/sign-up/phone': {
         return (
           <PhoneAuth
-            signInWithPhone={phone => new Promise((res, rej) => rej())}
+            signInWithPhone={phone => new Promise((res, rej) => {
+              console.log(phone);
+              return rej()
+            })}
             redeemCode={code => AlertIOS('Please attach method to redeemCode prop')}
             codeLength={7}
             buttonTextColor='black'
@@ -45,8 +96,8 @@ export const SignUp = observer(({ history }) => {
   }
 
   return (
-    <View style={styles.container}>
+    <Container>
       { tabs() }
-    </View>
+    </Container>
   )
 });
