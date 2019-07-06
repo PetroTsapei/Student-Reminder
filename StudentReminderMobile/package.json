@@ -7,6 +7,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@react-native-community/async-storage": "^1.5.0",
     "mobx": "^5.10.1",
     "mobx-persist": "^0.4.1",
     "mobx-react": "^6.1.1",

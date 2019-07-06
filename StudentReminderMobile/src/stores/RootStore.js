@@ -1,7 +1,8 @@
 import { create } from 'mobx-persist';
 import { createContext } from 'react';
-import { AsyncStorage } from 'react-native';
-import { ObservableAuthStoreContext } from './ObservableAuthStrore';
+import AsyncStorage from '@react-native-community/async-storage';
+import { AuthStore } from './AuthStrore';
+import { FetchingStore } from './FetchingStore';
 
 const hydrate = create({
   storage: AsyncStorage,
@@ -9,7 +10,8 @@ const hydrate = create({
 });
 
 export class RootStore {
-  authStore = new ObservableAuthStoreContext(this)
+  authStore = new AuthStore(this);
+  fetchingStore = new FetchingStore();
 
   constructor() {
     hydrate("authStore", this.authStore);

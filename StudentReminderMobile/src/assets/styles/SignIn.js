@@ -2,9 +2,6 @@ import { StyleSheet, Platform } from 'react-native';
 
 // IOS
 const ios = StyleSheet.create({
-  form: {
-    
-  },
   buttonSignIn: {
     marginTop: 15
   },

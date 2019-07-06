@@ -14,4 +14,17 @@ export default class AuthApi {
     return fetchRequest(request);
   }
 
+  static signIn(data) {
+    // TODO replace new Request
+    const request = new Request(`${apiUrl}/sign_in`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data)
+    })
+
+    return fetchRequest(request);
+  }
+
 }

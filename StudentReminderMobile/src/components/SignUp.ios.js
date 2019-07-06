@@ -16,14 +16,14 @@ import {
   Icon
 } from 'native-base';
 import {observer} from 'mobx-react-lite';
-import { ObservableAuthStoreContext } from '../stores/ObservableAuthStrore';
+import { RootStoreContext } from '../stores/RootStore';
 import PhoneAuth from 'react-native-phone-auth-component';
 
 import styles from '../assets/styles/SignUp';
 
 
 export const SignUp = observer(({ history }) => {
-  const authStore = useContext(ObservableAuthStoreContext);
+  const authStore = useContext(RootStoreContext);
 
   function signUpForm() {
     return (
