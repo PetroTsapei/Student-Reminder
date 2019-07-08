@@ -11,6 +11,12 @@ const ios = StyleSheet.create({
   },
   signUpButtonText: {
     color: '#eb9e3e'
+  },
+  icon: {
+    fontSize: 20
+  },
+  error: {
+    color: '#e83540'
   }
 });
 

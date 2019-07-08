@@ -1,36 +1,18 @@
-export default request => {
-  const errorStatuses = [400, 401, 403, 404, 413, 429, 500];
+export default function fetchRequest(url, options) {
+  return new Promise(async (resolve, reject) => {
+    
+    try {
+      const response = await fetch(url, options);
 
-  return fetch(request).then(response => {
-    console.log(response.status);
-    if(response.status === 204) return {}
-    else if (response.status === 403) return {
-      status: response.status,
-      message: "You don't have access for this action"
-    }
+      if (!response.ok) return response.json().finally(resp => reject(resp));
 
-    return response.json().then(resp => {
-      if (errorStatuses.includes(response.status)) {
-        const message = resp.detail || (resp.nonFieldErrors && resp.nonFieldErrors[0]);
-        const errorObj = {
-          status: response.status,
-          ...(message ? {message} : {fieldsErrors: resp}),
-        };
-
-        return Promise.reject(errorObj)
+      if (response.status !== 401) {
+        return resolve(response.json().finally(resp => resp));
       }
 
-      return resp
-    }).catch(error => {
-      if(error) throw error;
+    } catch(error) {
+      reject(error);
+    }
 
-      const errorObj = {
-        status: response.status,
-        message: response.statusText
-      };
-
-      throw errorObj;
-    })
-
-  }).catch(error => Promise.reject(error))
+  });
 }

@@ -43,9 +43,9 @@ exports.sign_in = function (req, res) {
     password
   } = req.body;
 
-  if (!countryCode) return res.status(400).send('countryCode is missing');
-  if (!phone) return res.status(400).send('phone is missing');
-  if (!password) return res.status(400).send('Password is missing');
+  if (!countryCode) return res.status(400).json({error: 'countryCode is missing'});
+  if (!phone) return res.status(400).json({error: 'phone is missing'});
+  if (!password) return res.status(400).json({error: 'Password is missing'});
 
   UserModel.findOne({ countryCode, phone, password: encrypt(password) })
     .then(doc => {

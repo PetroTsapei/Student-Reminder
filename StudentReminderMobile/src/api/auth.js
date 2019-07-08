@@ -15,16 +15,13 @@ export default class AuthApi {
   }
 
   static signIn(data) {
-    // TODO replace new Request
-    const request = new Request(`${apiUrl}/sign_in`, {
+    return fetchRequest(`${apiUrl}/sign_in`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(data)
-    })
-
-    return fetchRequest(request);
+    });
   }
 
 }
