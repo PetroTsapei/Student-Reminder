@@ -11,16 +11,25 @@ export class AuthStore {
   @persist @observable token = "";
 
   @action
-  async signIn() {
+  async signIn(signInData) {
     try {
+
+      const {
+        countryCode,
+        phone,
+        password
+      } = signInData;
+
       this.rootStore.fetchingStore.setFetchState(true);
       const data = await AuthApi.signIn({
-        countryCode: "+380",
-        phone: "964566810",
-        password: "sniper_petro2"
+        countryCode: `+${countryCode}`,
+        phone,
+        password
       });
 
-      console.log(data);
+      if (data.verified) {
+        this.token = data.token;
+      }
       
     } catch (obj) {
       if (obj.error) Alert.alert(

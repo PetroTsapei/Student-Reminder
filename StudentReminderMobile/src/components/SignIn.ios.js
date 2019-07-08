@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
-import { useInput } from '../helpers/customHooks';
+import { useForm } from '../helpers/customHooks';
+import validate from '../helpers/validate';
 import { findNumbers } from 'libphonenumber-js'
 import {Text, View} from 'react-native';
 import {
@@ -25,43 +26,24 @@ import styles from '../assets/styles/SignIn';
 
 export const SignIn = observer(({ history }) => {
   const rootStore = useContext(RootStoreContext);
-  const { 
-    value: phone, 
-    bind: phoneBind, 
-    reset: phoneReset, 
-    error: phoneErr,
-    setError: setPhoneErr
-  } = useInput('+');
-  const { 
-    value: password, 
-    bind: passBind, 
-    reset: passReset,
-    error: passErr,
-    setError: setPassErr
-  } = useInput('');
 
-  onSignIn = () => {
-    let number = findNumbers(phone, 'UA', {
+  const {
+    values,
+    errors,
+    handleChange,
+    handleSubmit,
+  } = useForm(onSignIn, validate);
+
+  function onSignIn() {
+    let numberData = findNumbers(values.phone, 'UA', {
       v2: true
-    })
+    })[0].number;
 
-    // TODO optimize it
-    let existError = false;
-
-    if (!phone) {
-      existError = true;
-      setPhoneErr('Phone number is required');
-    }
-    if (!password) {
-      existError = true;
-      setPassErr('Password is required');
-    }
-    if (phone && !number.length) {
-      existError = true;
-      setPhoneErr('Invalid phone number');
-    }
-    
-    if (!existError) rootStore.authStore.signIn();
+    rootStore.authStore.signIn({
+      countryCode: numberData.countryCallingCode,
+      phone: numberData.nationalNumber,
+      password: values.password
+    });
   }
 
   return (
@@ -77,31 +59,34 @@ export const SignIn = observer(({ history }) => {
       </Header>
       <Content>
         <Form>
-          <Item floatingLabel error={!!phoneErr}>
+          <Item floatingLabel last error={!!errors.phone}>
             <Icon style={styles.icon} type="FontAwesome" name="phone" />
             {
-              phoneErr ? 
-                <Label style={styles.error}>{phoneErr}</Label>
+              errors.phone ?
+                <Label style={styles.error}>{errors.phone}</Label>
                 :
                 <Label>Phone Number</Label>
             }
             <Input
               keyboardType={'phone-pad'}
               returnKeyType='done'
-              { ...phoneBind }
+              maxLength={15}
+              value={values.phone}
+              onChangeText={text => handleChange(text, 'phone')}
             />
           </Item>
-          <Item floatingLabel last error={!!passErr}>
+          <Item floatingLabel last error={!!errors.password}>
             <Icon style={styles.icon} type="FontAwesome" name="lock" />
             {
-              passErr ?
-                <Label style={styles.error}>{passErr}</Label>
+              errors.password ?
+                <Label style={styles.error}>{errors.password}</Label>
                 :
                 <Label>Password</Label>   
             }
             <Input 
               secureTextEntry={true}
-              { ...passBind }
+              value={values.password}
+              onChangeText={text => handleChange(text, 'password')}
             />
           </Item>
           <Button transparent dark style={styles.signUpButton} onPress={() => history.push('/sign-up')}>
@@ -110,7 +95,7 @@ export const SignIn = observer(({ history }) => {
           </Button>
         </Form>
       </Content>
-      <Button disabled={rootStore.fetchingStore.isFetching} block large warning onPress={onSignIn}>
+      <Button disabled={rootStore.fetchingStore.isFetching} block large warning onPress={handleSubmit}>
         {
           rootStore.fetchingStore.isFetching ?
             <Spinner color='black' />
