@@ -1,12 +1,12 @@
 import React, { useContext } from 'react';
 import { Switch } from 'react-router-native';
+import {observer} from 'mobx-react-lite';
 import { RootStoreContext } from '../stores/RootStore';
 import PrivateRoutes from './PrivateRoutes';
 import PublicRoutes from './PublicRoutes';
 
-export default MainRouter = () => {
+export default MainRouter = observer(() => {
   const rootStore = useContext(RootStoreContext);
-  console.log(rootStore.authStore.token);
 
   return (
     <Switch>
@@ -15,4 +15,4 @@ export default MainRouter = () => {
       { PublicRoutes() }
     </Switch>
   )
-}
+})

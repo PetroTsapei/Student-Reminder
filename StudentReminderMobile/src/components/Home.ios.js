@@ -1,4 +1,97 @@
-import React from 'react';
-import {Text, View} from 'react-native';
+import React, { useContext } from 'react';
+import { 
+  Container, 
+  Content, 
+  Footer, 
+  FooterTab, 
+  Button, 
+  Icon, 
+  Text, 
+  Body, 
+  ListItem,
+  Header,
+  Title
+} from 'native-base';
+import MapView from 'react-native-maps';
+import { RootStoreContext } from '../stores/RootStore';
 
-export const Home = () => <Text>test</Text>
+import styles from '../assets/styles/Home';
+
+export const Home = ({ history }) => {
+  const rootStore = useContext(RootStoreContext);
+
+  const goTo = path => history.push(path);
+
+  const isActive = path => history.location.pathname === path;
+
+  pages = () => {
+    switch(history.location.pathname) {
+      case '/': return (
+        <MapView 
+          showsUserLocation={true}
+          style={styles.map}
+        />
+      )
+      case '/:settings': return (
+        <>
+          <Header>
+            <Body>
+              <Title>
+                Settings
+              </Title>
+            </Body>
+          </Header>
+          <Content>
+            <ListItem last>
+              <Body>
+                <Button transparent danger onPress={() => rootStore.authStore.signOut()}>
+                  <Text>Sign Out</Text>
+                </Button>
+              </Body>
+            </ListItem>
+          </Content>
+        </>
+      )
+    }
+  }
+
+  return (
+    <Container>
+        { pages() }
+        <Footer>
+          <FooterTab>
+            <Button vertical>
+              <Icon type="MaterialIcons" name="schedule" />
+              <Text>Lessons</Text>
+            </Button>
+            <Button vertical>
+              <Icon name="camera" />
+              <Text>Camera</Text>
+            </Button>
+            <Button 
+              vertical 
+              active={isActive('/')} 
+              onPress={() => goTo('/')}
+            >
+              <Icon 
+                active={isActive('/')}
+                name="navigate" 
+              />
+              <Text>Map</Text>
+            </Button>
+            <Button 
+              vertical 
+              onPress={() => goTo('/:settings')}
+              active={isActive('/:settings')}
+            >
+              <Icon 
+                name="settings" 
+                active={isActive('/:settings')}
+              />
+              <Text>Settings</Text>
+            </Button>
+        </FooterTab>
+      </Footer>
+    </Container>
+  )
+}

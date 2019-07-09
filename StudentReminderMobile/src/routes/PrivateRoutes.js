@@ -1,12 +1,13 @@
 import React from 'react';
 import {View, Text} from 'react-native';
 import { Route } from 'react-router-native';
+import { Home } from '../components/Home';
 
 const routes = [
   {
-    path: "/",
+    path: ['/', '/:settings'],
     exact: true,
-    component: () => <View><Text>welcome</Text></View>
+    component: Home
   },
   {
     path: "/lessons",

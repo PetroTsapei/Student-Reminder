@@ -44,4 +44,9 @@ export class AuthStore {
       this.rootStore.fetchingStore.setFetchState(false);
     }
   }
+
+  @action
+  signOut() {
+    this.token = "";
+  }
 }
