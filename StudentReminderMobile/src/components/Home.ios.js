@@ -7,8 +7,7 @@ import {
   Button, 
   Icon, 
   Text, 
-  Body, 
-  ListItem,
+  Body,
   Header,
   Title
 } from 'native-base';
@@ -21,8 +20,11 @@ export const Home = ({ history }) => {
   const rootStore = useContext(RootStoreContext);
 
   const goTo = path => history.push(path);
-
   const isActive = path => history.location.pathname === path;
+  const onSignOut = () => {
+    rootStore.authStore.signOut();
+    history.push('/');
+  }
 
   pages = () => {
     switch(history.location.pathname) {
@@ -42,13 +44,9 @@ export const Home = ({ history }) => {
             </Body>
           </Header>
           <Content>
-            <ListItem last>
-              <Body>
-                <Button transparent danger onPress={() => rootStore.authStore.signOut()}>
-                  <Text>Sign Out</Text>
-                </Button>
-              </Body>
-            </ListItem>
+            <Button full danger style={styles.settingSignOut} onPress={onSignOut}>
+              <Text>Sign Out</Text>
+            </Button>
           </Content>
         </>
       )
@@ -75,7 +73,7 @@ export const Home = ({ history }) => {
             >
               <Icon 
                 active={isActive('/')}
-                name="navigate" 
+                name="navigate"
               />
               <Text>Map</Text>
             </Button>

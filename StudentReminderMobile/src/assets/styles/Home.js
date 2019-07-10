@@ -9,7 +9,10 @@ const ios = StyleSheet.create({
     flex: 1,
   },
   settingSignOut: {
-    textAlign: 'center'
+    paddingTop: 10,
+  },
+  tabItem: {
+    color: '#f0ad4e'
   }
 });
 
