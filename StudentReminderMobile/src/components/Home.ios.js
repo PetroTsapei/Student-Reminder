@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { 
   Container, 
   Content, 
@@ -11,13 +11,18 @@ import {
   Header,
   Title
 } from 'native-base';
-import MapView from 'react-native-maps';
+import { Image, Alert } from 'react-native';
+import College from '../assets/images/college.png';
+import MapView, { Marker, AnimatedRegion } from 'react-native-maps';
 import { RootStoreContext } from '../stores/RootStore';
 
 import styles from '../assets/styles/Home';
 
 export const Home = ({ history }) => {
   const rootStore = useContext(RootStoreContext);
+  const [initialRegion, setInitialRegion] = useState({});
+  const latitude = 48.9430535;
+  const longitude = 24.7337011;
 
   const goTo = path => history.push(path);
   const isActive = path => history.location.pathname === path;
@@ -26,13 +31,48 @@ export const Home = ({ history }) => {
     history.push('/');
   }
 
+  getCurrentLocation = () => {
+    // TODO fix it
+    navigator.geolocation.getCurrentPosition(
+      position => {
+        let region = {
+          latitude: parseFloat(position.coords.latitude),
+          longitude: parseFloat(position.coords.longitude),
+          latitudeDelta: 5,
+          longitudeDelta: 5
+        };
+
+        console.log(region);
+
+        setInitialRegion(region);
+      },
+      error => Alert.alert('Error', error),
+      {
+        enableHighAccuracy: true,
+        timeout: 20000,
+        maximumAge: 1000
+      }
+    );
+  }
+
+  useEffect(() => getCurrentLocation(), []);
+
   pages = () => {
     switch(history.location.pathname) {
       case '/': return (
         <MapView 
           showsUserLocation={true}
+          followUserLocation={true}
+          zoomEnabled={true}
+          // initialRegion={initialRegion}
           style={styles.map}
-        />
+        >
+          <Marker 
+            coordinate={{ longitude, latitude }}
+          >
+            <Image source={College} style={{ width: 40, height: 40 }} />
+          </Marker>
+        </MapView>
       )
       case '/:settings': return (
         <>
