@@ -26,3 +26,19 @@ exports.post = function(req, res) {
     }
   })
 }
+
+exports.getAll = function(req, res) {
+  decodeJWT = jwt.decode(req.token);
+  if (decodeJWT) req.role = decodeJWT.user.role;
+
+  jwt.verify(req.token, req.role, err => {
+    if (err) {
+      res.sendStatus(403);
+    } else {
+      // console.log(req.query.typeOfTime);
+      LessonModel.findOne({
+        
+      })
+    }
+  })
+}

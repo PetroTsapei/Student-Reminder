@@ -12,8 +12,9 @@ import {
   Title
 } from 'native-base';
 import { Image, Alert } from 'react-native';
+import { Lessons } from '../components/Lessons';
 import College from '../assets/images/college.png';
-import MapView, { Marker, AnimatedRegion } from 'react-native-maps';
+import MapView, { Marker } from 'react-native-maps';
 import { RootStoreContext } from '../stores/RootStore';
 
 import styles from '../assets/styles/Home';
@@ -38,11 +39,9 @@ export const Home = ({ history }) => {
         let region = {
           latitude: parseFloat(position.coords.latitude),
           longitude: parseFloat(position.coords.longitude),
-          latitudeDelta: 5,
-          longitudeDelta: 5
+          latitudeDelta: 1,
+          longitudeDelta: 1
         };
-
-        console.log(region);
 
         setInitialRegion(region);
       },
@@ -58,38 +57,41 @@ export const Home = ({ history }) => {
   useEffect(() => getCurrentLocation(), []);
 
   pages = () => {
-    switch(history.location.pathname) {
-      case '/': return (
-        <MapView 
-          showsUserLocation={true}
-          followUserLocation={true}
-          zoomEnabled={true}
-          // initialRegion={initialRegion}
-          style={styles.map}
-        >
-          <Marker 
-            coordinate={{ longitude, latitude }}
+    if (Object.keys(initialRegion).length) {
+      switch(history.location.pathname) {
+        case '/': return (
+          <MapView
+            showsUserLocation={true}
+            followUserLocation={true}
+            zoomEnabled={true}
+            style={styles.map}
+            initialRegion={initialRegion}
           >
-            <Image source={College} style={{ width: 40, height: 40 }} />
-          </Marker>
-        </MapView>
-      )
-      case '/:settings': return (
-        <>
-          <Header>
-            <Body>
-              <Title>
-                Settings
-              </Title>
-            </Body>
-          </Header>
-          <Content>
-            <Button full danger style={styles.settingSignOut} onPress={onSignOut}>
-              <Text>Sign Out</Text>
-            </Button>
-          </Content>
-        </>
-      )
+            <Marker 
+              coordinate={{ longitude, latitude }}
+            >
+              <Image source={College} style={{ width: 40, height: 40 }} />
+            </Marker>
+          </MapView>
+        )
+        case '/:settings': return (
+          <>
+            <Header>
+              <Body>
+                <Title>
+                  Settings
+                </Title>
+              </Body>
+            </Header>
+            <Content>
+              <Button full danger style={styles.settingSignOut} onPress={onSignOut}>
+                <Text>Sign Out</Text>
+              </Button>
+            </Content>
+          </>
+        )
+        case '/:lessons': return <Lessons />
+      }
     }
   }
 
@@ -98,8 +100,16 @@ export const Home = ({ history }) => {
         { pages() }
         <Footer>
           <FooterTab>
-            <Button vertical>
-              <Icon type="MaterialIcons" name="schedule" />
+            <Button 
+              vertical
+              active={isActive('/:lessons')}
+              onPress={() => goTo('/:lessons')}
+            >
+              <Icon 
+                type="MaterialIcons"
+                name="schedule"
+                active={isActive('/:lessons')}
+              />
               <Text>Lessons</Text>
             </Button>
             <Button vertical>

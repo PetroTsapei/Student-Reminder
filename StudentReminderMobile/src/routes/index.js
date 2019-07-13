@@ -10,7 +10,6 @@ export default MainRouter = observer(() => {
 
   return (
     <Switch>
-      {/* TODO fix dynamic update token */}
       { rootStore.authStore.token && PrivateRoutes() }
       { PublicRoutes() }
     </Switch>
