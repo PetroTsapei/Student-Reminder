@@ -1,5 +1,16 @@
 const LessonModel = require('../models/lesson');
+const GroupModel = require('../models/group');
+const ScheduleModel = require('../models/schedule');
+const SubjectModel = require('../models/subject');
+const UserModel = require('../models/user');
+const asyncForEach = require('../helpers/asyncForEach');
 const jwt = require('jsonwebtoken');
+
+Date.prototype.getWeekOfMonth = function() {
+  let firstWeekday = new Date(this.getFullYear(), this.getMonth(), 1).getDay();
+  let offsetDate = this.getDate() + firstWeekday - 1;
+  return Math.floor(offsetDate / 7);
+}
 
 exports.post = function(req, res) {
   jwt.verify(req.token, req.role, err => {
@@ -31,14 +42,39 @@ exports.getAll = function(req, res) {
   decodeJWT = jwt.decode(req.token);
   if (decodeJWT) req.role = decodeJWT.user.role;
 
-  jwt.verify(req.token, req.role, err => {
+  jwt.verify(req.token, req.role, async err => {
     if (err) {
       res.sendStatus(403);
     } else {
-      // console.log(req.query.typeOfTime);
-      LessonModel.findOne({
-        
-      })
+      try {
+        let results = [];
+
+        let { _id: group, groupName } = await GroupModel.findOne({ groupName: req.query.groupName });
+        let lessons = await LessonModel.find({ group });
+
+        await asyncForEach(lessons, async item => {
+
+          const schedule = await ScheduleModel.findById(item.schedule);
+          const weekOfMonth = new Date().getWeekOfMonth();
+
+          if (req.query.typeOfTime === schedule.typeOfTime && item.numberOfWeek === weekOfMonth) {
+            const subject = await SubjectModel.findById(item.subject);
+            const teacher = await UserModel.findById(item.teacher);
+
+            results.push({
+              ...item._doc,
+              group: groupName,
+              subject: subject.name,
+              schedule,
+              teacher: teacher.fullName
+            })
+          }
+        });
+
+        res.json(results);
+      } catch(err) {
+        res.status(500).json(err);
+      }
     }
   })
 }

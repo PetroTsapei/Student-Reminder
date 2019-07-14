@@ -39,8 +39,8 @@ export const Home = ({ history }) => {
         let region = {
           latitude: parseFloat(position.coords.latitude),
           longitude: parseFloat(position.coords.longitude),
-          latitudeDelta: 1,
-          longitudeDelta: 1
+          latitudeDelta: 0.1,
+          longitudeDelta: 0.1
         };
 
         setInitialRegion(region);

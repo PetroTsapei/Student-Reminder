@@ -9,6 +9,7 @@ export class AuthStore {
   }
 
   @persist @observable token = "";
+  @persist @observable group = "";
 
   @action
   async signIn(signInData) {
@@ -29,6 +30,7 @@ export class AuthStore {
 
       if (data.verified) {
         this.token = data.token;
+        this.group = data.groupName;
       }
       
     } catch (obj) {
@@ -48,5 +50,6 @@ export class AuthStore {
   @action
   signOut() {
     this.token = "";
+    this.group = "";
   }
 }

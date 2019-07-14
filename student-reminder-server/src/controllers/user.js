@@ -50,6 +50,7 @@ exports.sign_in = function (req, res) {
   UserModel.findOne({ countryCode, phone, password: encrypt(password) })
     .then(doc => {
       if (doc) {
+        doc = doc.toObject();
         jwt.sign({ user: doc }, doc.role, (err, token) => {
           if (err) res.status(500).json(err);
 
@@ -63,7 +64,8 @@ exports.sign_in = function (req, res) {
             res.json({
               token,
               role: doc.role,
-              verified: doc.verified
+              verified: doc.verified,
+              ...( doc.role === 'student' ? { groupName: doc.groupName } : {})
             });
           }
         });
