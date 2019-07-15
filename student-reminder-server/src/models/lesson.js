@@ -22,7 +22,7 @@ const LessonSchema = new mongoose.Schema({
     type: ObjectId,
     required: true
   },
-  numberOfWeek: {
+  weekOfMonth: {
     type: Number,
     required: true,
     enum: [1, 2, 3, 4]
@@ -48,7 +48,7 @@ LessonSchema.pre('validate', function (next) {
                       .then(doc => {
                         if (!doc && self.teacher) next({error: "Teacher not found"});
                         else {
-                          self.constructor.findOne({ schedule: self.schedule, numberOfWeek: self.numberOfWeek })
+                          self.constructor.findOne({ schedule: self.schedule, weekOfMonth: self.weekOfMonth })
                             .then(doc => {
                               if (doc) next({error: "Lesson already exist for this group"});
                               else next();

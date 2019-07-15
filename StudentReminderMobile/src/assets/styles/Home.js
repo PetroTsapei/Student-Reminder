@@ -13,7 +13,12 @@ const ios = StyleSheet.create({
   },
   tabItem: {
     color: '#f0ad4e'
-  }
+  },
+  card: {
+    marginLeft: 10,
+    marginRight: 10,
+    marginBottom: 5
+  },
 });
 
 export default Platform.select({

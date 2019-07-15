@@ -19,7 +19,6 @@ export class LessonsStore {
         token: this.rootStore.authStore.token
       })
 
-      console.log(results);
       this.lessons = results;
 
     } catch (error) {
@@ -31,5 +30,9 @@ export class LessonsStore {
     } finally {
       this.rootStore.fetchingStore.setFetchState(false);
     }
+  }
+
+  @action reset() {
+    this.lessons = [];
   }
 }

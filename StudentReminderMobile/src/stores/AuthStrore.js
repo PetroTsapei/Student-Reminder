@@ -51,5 +51,6 @@ export class AuthStore {
   signOut() {
     this.token = "";
     this.group = "";
+    this.rootStore.lessonsStore.reset();
   }
 }

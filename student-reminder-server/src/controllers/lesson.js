@@ -57,7 +57,7 @@ exports.getAll = function(req, res) {
           const schedule = await ScheduleModel.findById(item.schedule);
           const weekOfMonth = new Date().getWeekOfMonth();
 
-          if (req.query.typeOfTime === schedule.typeOfTime && item.numberOfWeek === weekOfMonth) {
+          if (req.query.typeOfTime === schedule.typeOfTime && item.weekOfMonth === weekOfMonth) {
             const subject = await SubjectModel.findById(item.subject);
             const teacher = await UserModel.findById(item.teacher);
 
