@@ -17,6 +17,7 @@ import {
 import dayOfWeek from '../helpers/numberOfWeek';
 import { RootStoreContext } from '../stores/RootStore';
 import { observer } from 'mobx-react-lite';
+import moment from 'moment';
 import styles from '../assets/styles/Home';
 
 export const Lessons = observer(() => {
@@ -47,17 +48,27 @@ export const Lessons = observer(() => {
         let weekLessons = [];
         let lessonsForDayOfWeek = lessons.filter(lesson => lesson.schedule.dayOfWeek == day);
         
-        if (!lessonsForDayOfWeek.length) continue;
+        if (!lessonsForDayOfWeek.length) {
+          weekLessons.push(notification('No lessons for this day'))
+        };
         if (new Date().getDay() == day) initialPage = day - 1; // tabs start numerate from 0
 
         lessonsForDayOfWeek.forEach((lessonItem, key) => {
+          const startLesson = moment(lessonItem.schedule.startTime).format('LT');
+          const endLesson = moment(lessonItem.schedule.endTime).format('LT');
+
           weekLessons.push(
             <Card style={styles.card} key={key}>
-              <CardItem bordered>
-                <Body>
+              <CardItem>
+                <Body style={styles.cardItemHours}>
                   <Text>
-                    { lessonItem.schedule.numberInSchedule }
+                    {`${startLesson} - ${endLesson}`}
                   </Text>
+                </Body>
+              </CardItem>
+              <CardItem>
+                <Body>
+                  <Text>test</Text>
                 </Body>
               </CardItem>
             </Card>
@@ -87,9 +98,13 @@ export const Lessons = observer(() => {
           { tabArr }
         </Tabs>
       )
-    } else return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <H2>Not found Lessons</H2>
+    } else return notification('Not found Lessons');
+  }
+
+  function notification(text) {
+    return (
+      <View key={new Date().getMilliseconds()} style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <H2>{text}</H2>
       </View>
     )
   }

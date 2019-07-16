@@ -19,6 +19,9 @@ const ios = StyleSheet.create({
     marginRight: 10,
     marginBottom: 5
   },
+  cardItemHours: {
+    alignItems: 'center'
+  }
 });
 
 export default Platform.select({
