@@ -9,7 +9,8 @@ import {
   Tabs, 
   Tab, 
   Spinner, 
-  H2, 
+  H2,
+  H3,
   View,
   Card,
   CardItem,
@@ -67,8 +68,9 @@ export const Lessons = observer(() => {
                 </Body>
               </CardItem>
               <CardItem>
-                <Body>
-                  <Text>test</Text>
+                <Body style={styles.cardContainer}>
+                  <H3>{lessonItem.subject}</H3>
+                  <Text style={styles.cardTeacher}>({lessonItem.teacher})</Text>
                 </Body>
               </CardItem>
             </Card>
