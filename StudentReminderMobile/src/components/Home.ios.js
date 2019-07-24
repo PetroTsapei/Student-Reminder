@@ -11,9 +11,11 @@ import {
   Header,
   Title
 } from 'native-base';
-import { Image, Alert } from 'react-native';
+import { Image, Alert, AppState } from 'react-native';
 import { Lessons } from '../components/Lessons';
 import College from '../assets/images/college.png';
+import PushController from '../helpers/PushController';
+import PushNotification from 'react-native-push-notification';
 import MapView, { Marker } from 'react-native-maps';
 import { RootStoreContext } from '../stores/RootStore';
 
@@ -54,26 +56,28 @@ export const Home = ({ history }) => {
     );
   }
 
-  useEffect(() => getCurrentLocation(), []);
+  handleAppStateChange = appState => {
+    if (appState === 'background') {
+      console.log('app is in background', rootStore.lessonsStore.lessons);
+      PushNotification.localNotification({
+        message: "Hello"
+      })
+    }
+  }
+
+  useEffect(() => {
+    getCurrentLocation();
+    AppState.addEventListener('change', handleAppStateChange);
+
+    return () => {
+      AppState.removeEventListener('change', handleAppStateChange);
+    }
+  }, []);
 
   pages = () => {
     if (Object.keys(initialRegion).length) {
       switch(history.location.pathname) {
-        case '/': return (
-          <MapView
-            showsUserLocation={true}
-            followUserLocation={true}
-            zoomEnabled={true}
-            style={styles.map}
-            initialRegion={initialRegion}
-          >
-            <Marker 
-              coordinate={{ longitude, latitude }}
-            >
-              <Image source={College} style={{ width: 40, height: 40 }} />
-            </Marker>
-          </MapView>
-        )
+        case '/': return <Lessons />
         case '/:settings': return (
           <>
             <Header>
@@ -90,7 +94,21 @@ export const Home = ({ history }) => {
             </Content>
           </>
         )
-        case '/:lessons': return <Lessons />
+        case '/:map': return (
+          <MapView
+            showsUserLocation={true}
+            followUserLocation={true}
+            zoomEnabled={true}
+            style={styles.map}
+            initialRegion={initialRegion}
+          >
+            <Marker 
+              coordinate={{ longitude, latitude }}
+            >
+              <Image source={College} style={{ width: 40, height: 40 }} />
+            </Marker>
+          </MapView>
+        )
       }
     }
   }
@@ -102,13 +120,13 @@ export const Home = ({ history }) => {
           <FooterTab>
             <Button 
               vertical
-              active={isActive('/:lessons')}
-              onPress={() => goTo('/:lessons')}
+              active={isActive('/')}
+              onPress={() => goTo('/')}
             >
               <Icon 
                 type="MaterialIcons"
                 name="schedule"
-                active={isActive('/:lessons')}
+                active={isActive('/')}
               />
               <Text>Lessons</Text>
             </Button>
@@ -118,11 +136,11 @@ export const Home = ({ history }) => {
             </Button>
             <Button 
               vertical 
-              active={isActive('/')} 
-              onPress={() => goTo('/')}
+              active={isActive('/:map')} 
+              onPress={() => goTo('/:map')}
             >
               <Icon 
-                active={isActive('/')}
+                active={isActive('/:map')}
                 name="navigate"
               />
               <Text>Map</Text>
@@ -140,6 +158,7 @@ export const Home = ({ history }) => {
             </Button>
         </FooterTab>
       </Footer>
+      <PushController />
     </Container>
   )
 }
