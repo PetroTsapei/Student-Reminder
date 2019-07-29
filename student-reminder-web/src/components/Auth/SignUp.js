@@ -18,7 +18,7 @@ function MadeWithLove() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
       {'Built with love by the '}
-      <Link color="inherit" href="https://www.linkedin.com/in/petro-tsapei-394857174">
+      <Link color="inherit" target="_blank" href="https://www.linkedin.com/in/petro-tsapei-394857174">
         Petro Tsapei
       </Link>
     </Typography>

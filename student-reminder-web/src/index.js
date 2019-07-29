@@ -5,7 +5,7 @@ import * as serviceWorker from './serviceWorker';
 import {RouterStore, syncHistoryWithStore} from "mobx-react-router";
 import { Provider } from 'mobx-react';
 import { Router } from 'react-router-dom';
-import createBrowserHistory from 'history/createBrowserHistory';
+import { createBrowserHistory } from 'history';
 
 const browserHistory = createBrowserHistory();
 const routingStore = new RouterStore();
