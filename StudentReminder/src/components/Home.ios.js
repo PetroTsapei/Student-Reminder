@@ -11,21 +11,18 @@ import {
   Header,
   Title
 } from 'native-base';
-import { Image, Alert, AppState } from 'react-native';
+import { Image, Alert, View } from 'react-native';
 import { Lessons } from '../components/Lessons';
 import College from '../assets/images/college.png';
-import PushController from '../helpers/PushController';
-import PushNotification from 'react-native-push-notification';
 import MapView, { Marker } from 'react-native-maps';
 import { RootStoreContext } from '../stores/RootStore';
+import { latitude, longitude } from '../constants/collegeCoords';
 
 import styles from '../assets/styles/Home';
 
 export const Home = ({ history }) => {
   const rootStore = useContext(RootStoreContext);
   const [initialRegion, setInitialRegion] = useState({});
-  const latitude = 48.9430535;
-  const longitude = 24.7337011;
 
   const goTo = path => history.push(path);
   const isActive = path => history.location.pathname === path;
@@ -56,58 +53,48 @@ export const Home = ({ history }) => {
     );
   }
 
-  handleAppStateChange = appState => {
-    if (appState === 'background') {
-      console.log('app is in background', rootStore.lessonsStore.lessons);
-      PushNotification.localNotification({
-        message: "Hello"
-      })
-    }
-  }
-
-  useEffect(() => {
-    getCurrentLocation();
-    AppState.addEventListener('change', handleAppStateChange);
-
-    return () => {
-      AppState.removeEventListener('change', handleAppStateChange);
-    }
-  }, []);
+  useEffect(() => getCurrentLocation(), ['initialRegion']);
 
   pages = () => {
-    if (Object.keys(initialRegion).length) {
-      switch(history.location.pathname) {
-        case '/': return <Lessons />
-        case '/:settings': return (
-          <>
-            <Header>
-              <Body>
-                <Title>
-                  Settings
-                </Title>
-              </Body>
-            </Header>
-            <Content>
-              <Button full danger style={styles.settingSignOut} onPress={onSignOut}>
-                <Text>Sign Out</Text>
-              </Button>
-            </Content>
-          </>
-        )
-        case '/:map': return (
-          <MapView
-            showsUserLocation={true}
-            followUserLocation={true}
-            zoomEnabled={true}
-            style={styles.map}
-            initialRegion={initialRegion}
-          >
-            <Marker 
-              coordinate={{ longitude, latitude }}
+    switch(history.location.pathname) {
+      case '/': return <Lessons />
+      case '/:settings': return (
+        <>
+          <Header>
+            <Body>
+              <Title>
+                Settings
+              </Title>
+            </Body>
+          </Header>
+          <Content>
+            <Button full danger style={styles.settingSignOut} onPress={onSignOut}>
+              <Text>Sign Out</Text>
+            </Button>
+          </Content>
+        </>
+      )
+      case '/:map': {
+        if (Object.keys(initialRegion).length) {
+          return (
+            <MapView
+              showsUserLocation={true}
+              followUserLocation={true}
+              zoomEnabled={true}
+              style={styles.map}
+              initialRegion={initialRegion}
             >
-              <Image source={College} style={{ width: 40, height: 40 }} />
-            </Marker>
-          </MapView>
+              <Marker 
+                coordinate={{ longitude, latitude }}
+              >
+                <Image source={College} style={{ width: 40, height: 40 }} />
+              </Marker>
+            </MapView>
+          )
+        } else return (
+          <View style={styles.mapLoading}>
+            <Text>Getting your location...</Text>
+          </View>
         )
       }
     }
@@ -158,7 +145,6 @@ export const Home = ({ history }) => {
             </Button>
         </FooterTab>
       </Footer>
-      <PushController />
     </Container>
   )
 }

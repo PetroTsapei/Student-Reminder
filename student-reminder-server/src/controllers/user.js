@@ -135,3 +135,8 @@ exports.verify = function(req, res) {
       res.status(500).json({ error: err.message || err });
     })
 }
+
+exports.locations = function(req, res) {
+  console.log(1);
+  res.status(200).json({ success: true })
+}

@@ -2,9 +2,6 @@ import { StyleSheet, Platform } from 'react-native';
 
 // IOS
 const ios = StyleSheet.create({
-  footerItem: {
-
-  },
   map: {
     flex: 1,
   },
@@ -30,6 +27,11 @@ const ios = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between'
+  },
+  mapLoading: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
   }
 });
 

@@ -60,7 +60,7 @@ export const SignIn = observer(({ history }) => {
       <Content>
         <Form>
           <Item floatingLabel last error={!!errors.phone}>
-            <Icon style={styles.icon} type="FontAwesome" name="phone" />
+            {/* <Icon style={styles.icon} type="FontAwesome" name="phone" /> */}
             {
               errors.phone ?
                 <Label style={styles.error}>{errors.phone}</Label>
@@ -76,7 +76,7 @@ export const SignIn = observer(({ history }) => {
             />
           </Item>
           <Item floatingLabel last error={!!errors.password}>
-            <Icon style={styles.icon} type="FontAwesome" name="lock" />
+            {/* <Icon style={styles.icon} type="FontAwesome" name="lock" /> */}
             {
               errors.password ?
                 <Label style={styles.error}>{errors.password}</Label>
@@ -89,7 +89,7 @@ export const SignIn = observer(({ history }) => {
               onChangeText={text => handleChange(text, 'password')}
             />
           </Item>
-          <Button transparent dark style={styles.signUpButton} onPress={() => history.push('/sign-up')}>
+          <Button transparent style={styles.signUpButton} onPress={() => history.push('/sign-up')}>
               <Text>Don't have an account? </Text>
               <Text style={styles.signUpButtonText}>Sign Up</Text>
           </Button>

@@ -1,6 +1,6 @@
 import { create } from 'mobx-persist';
 import { createContext } from 'react';
-import AsyncStorage from '@react-native-community/async-storage';
+import { AsyncStorage } from 'react-native';
 import { AuthStore } from './AuthStrore';
 import { FetchingStore } from './FetchingStore';
 import { LessonsStore } from './LessonsStore';
