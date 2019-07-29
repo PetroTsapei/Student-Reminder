@@ -136,7 +136,24 @@ exports.verify = function(req, res) {
     })
 }
 
-exports.locations = function(req, res) {
-  console.log(1);
-  res.status(200).json({ success: true })
+exports.pushToken = function(req, res) {
+  decodeJWT = jwt.decode(req.token);
+  if (decodeJWT) req.role = decodeJWT.user.role;
+
+  jwt.verify(req.token, req.role, async err => {
+    if (err) {
+      res.sendStatus(403);
+    } else {
+      UserModel.findByIdAndUpdate(decodeJWT.user._id, {
+        $set: { pushToken: req.body.pushToken }
+      })
+        .then(doc => {
+          if (doc) res.json(doc);
+          else res.status(404).json({ message: "User not found" });
+        })
+        .catch(err => {
+          res.status(500).json(err)
+        })
+    }
+  })
 }

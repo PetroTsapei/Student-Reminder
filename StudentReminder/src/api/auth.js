@@ -24,4 +24,15 @@ export default class AuthApi {
     });
   }
 
+  static pushToken({ pushToken, token }) {
+    return fetchRequest(`${apiUrl}/push-token`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization" : `Bearer ${token}`
+      },
+      body: JSON.stringify({pushToken})
+    });
+  }
+
 }

@@ -42,7 +42,8 @@ const UserSchema = new mongoose.Schema({
     required: true,
     enum: ["admin", "teacher", "student"]
   },
-  groupLeader: Boolean
+  groupLeader: Boolean,
+  pushToken: String
 });
 
 UserSchema.methods.sendAuthyToken = function(cb) {

@@ -5,6 +5,7 @@ const SubjectModel = require('../models/subject');
 const UserModel = require('../models/user');
 const asyncForEach = require('../helpers/asyncForEach');
 const jwt = require('jsonwebtoken');
+const sendPushWithExpo = require('../helpers/sendPushWithExpo');
 
 Date.prototype.getWeekOfMonth = function() {
   let firstWeekday = new Date(this.getFullYear(), this.getMonth(), 1).getDay();
@@ -25,6 +26,12 @@ exports.post = function(req, res) {
           if (!doc || doc.length === 0) {
             return res.status(500).send(doc);
           }
+
+          ScheduleModel.findById(doc.schedule)
+            .then(schedule => {
+              console.log(schedule);
+            });
+          // sendPushWithExpo(['ExponentPushToken[Mvio75Fh88WDjXE8m3hQ4J]'], { body: 'Test', sound: 'default' });
 
           res.status(201).json({
             message: "Lesson created",
