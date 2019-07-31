@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from '../../helpers/customHooks';
 import validate from '../../helpers/validate';
 import { observer, inject } from 'mobx-react';
@@ -61,7 +61,16 @@ export default inject('auth')(observer(function SignIn({ auth }) {
     errors,
     handleChange,
     handleSubmit,
+    setValues
   } = useForm(onSignIn, validate);
+
+  useEffect(() => {
+    // initialize first time values
+    setValues({
+      phone: "",
+      password: ""
+    })
+  }, [setValues]);
 
   function onSignIn() {
     let numberData = findNumbers(values.phone, 'UA', {
@@ -98,7 +107,7 @@ export default inject('auth')(observer(function SignIn({ auth }) {
             type="tel"
             autoFocus
             onChange={e => handleChange(e.target.value, 'phone')}
-            error={errors.phone}
+            error={!!errors.phone}
             helperText={errors.phone}
           />
           <TextField
@@ -112,7 +121,7 @@ export default inject('auth')(observer(function SignIn({ auth }) {
             id="password"
             autoComplete="current-password"
             onChange={e => handleChange(e.target.value, 'password')}
-            error={errors.password}
+            error={!!errors.password}
             helperText={errors.password}
           />
           <FormControlLabel
