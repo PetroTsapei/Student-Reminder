@@ -6,15 +6,18 @@ import {RouterStore, syncHistoryWithStore} from "mobx-react-router";
 import { Provider } from 'mobx-react';
 import { Router } from 'react-router-dom';
 import { createBrowserHistory } from 'history';
+import { AuthStore } from './stores/AuthStore';
 
 const browserHistory = createBrowserHistory();
 const routingStore = new RouterStore();
+const authStore = new AuthStore();
 
 const history = syncHistoryWithStore(browserHistory, routingStore);
 
 /* stores */
 const stores = {
-  routing: routingStore
+  routing: routingStore,
+  auth: authStore
 };
 
 ReactDOM.render(

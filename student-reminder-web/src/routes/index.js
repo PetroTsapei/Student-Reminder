@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { withRouter, Switch } from 'react-router';
+import { observer, inject } from 'mobx-react';
 
 import PublicRoutes from './PublicRoutes';
 import PrivateRoutes from './PrivateRoutes';
@@ -26,7 +27,7 @@ class MainRouter extends Component {
     return (
       <ScrollToTopWrapper>
         <Switch>
-          { false && PrivateRoutes() }
+          { this.props.auth.token && PrivateRoutes() }
           { PublicRoutes() }
         </Switch>
       </ScrollToTopWrapper>
@@ -34,4 +35,4 @@ class MainRouter extends Component {
   }
 }
 
-export default MainRouter
+export default inject('auth')(observer(MainRouter));

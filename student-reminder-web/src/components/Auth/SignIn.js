@@ -1,4 +1,8 @@
 import React from 'react';
+import { useForm } from '../../helpers/customHooks';
+import validate from '../../helpers/validate';
+import { observer, inject } from 'mobx-react';
+import { findNumbers } from 'libphonenumber-js';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -50,8 +54,26 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function SignIn() {
+export default inject('auth')(observer(function SignIn({ auth }) {
   const classes = useStyles();
+  const {
+    values,
+    errors,
+    handleChange,
+    handleSubmit,
+  } = useForm(onSignIn, validate);
+
+  function onSignIn() {
+    let numberData = findNumbers(values.phone, 'UA', {
+      v2: true
+    })[0].number;
+
+    auth.signIn({
+      countryCode: numberData.countryCallingCode,
+      phone: numberData.nationalNumber,
+      password: values.password
+    });
+  }
 
   return (
     <Container component="main" maxWidth="xs">
@@ -63,7 +85,7 @@ export default function SignIn() {
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>
-        <form className={classes.form} noValidate>
+        <form className={classes.form} noValidate onSubmit={handleSubmit}>
           <TextField
             variant="outlined"
             margin="normal"
@@ -75,6 +97,9 @@ export default function SignIn() {
             autoComplete="tel"
             type="tel"
             autoFocus
+            onChange={e => handleChange(e.target.value, 'phone')}
+            error={errors.phone}
+            helperText={errors.phone}
           />
           <TextField
             variant="outlined"
@@ -86,6 +111,9 @@ export default function SignIn() {
             type="password"
             id="password"
             autoComplete="current-password"
+            onChange={e => handleChange(e.target.value, 'password')}
+            error={errors.password}
+            helperText={errors.password}
           />
           <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
@@ -119,4 +147,4 @@ export default function SignIn() {
       </Box>
     </Container>
   );
-}
+}))

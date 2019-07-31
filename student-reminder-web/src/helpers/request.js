@@ -1,19 +1,31 @@
-export default function fetchRequest(request) {
-  return new Promise(async (resolve, reject) => {
-    
-    try {
-      const response = await fetch(request);
-      console.log(response);
+export default request => {
+  const errorStatuses = [400, 401, 403, 404, 413, 429, 500];
 
-      // if (!response.ok) return response.json().finally(resp => reject(resp));
+  return fetch(request).then(response => {
+    if(response.status === 204) return {}
 
-      // if (response.status !== 401) {
-      //   return resolve(response.json().finally(resp => resp));
-      // }
+    return response.json().then(resp => {
+      if (errorStatuses.includes(response.status)) {
+        const message = resp.error || (resp.nonFieldErrors && resp.nonFieldErrors[0]);
+        const errorObj = {
+          status: response.status,
+          ...(message ? {message} : {fieldsErrors: resp}),
+        };
 
-    } catch(error) {
-      reject(error);
-    }
+        return Promise.reject(errorObj)
+      }
 
-  });
+      return resp
+    }).catch(error => {
+      if(error) throw error;
+
+      const errorObj = {
+        status: response.status,
+        message: response.statusText
+      };
+
+      throw errorObj;
+    })
+
+  }).catch(error => Promise.reject(error))
 }

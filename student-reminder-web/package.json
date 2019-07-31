@@ -5,8 +5,10 @@
   "dependencies": {
     "@material-ui/core": "^4.1.0",
     "@material-ui/icons": "^4.1.0",
+    "libphonenumber-js": "^1.7.21",
     "material-ui-icons": "^1.0.0-beta.36",
     "mobx": "^5.10.1",
+    "mobx-persist": "^0.4.1",
     "mobx-react": "^6.0.3",
     "mobx-react-router": "^4.0.7",
     "react": "^16.8.6",
