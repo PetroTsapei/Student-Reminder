@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from '../../helpers/customHooks';
 import validate from '../../helpers/validate';
 import { observer, inject } from 'mobx-react';
@@ -64,6 +64,8 @@ export default inject('auth')(observer(function SignIn({ auth }) {
     setValues
   } = useForm(onSignIn, validate);
 
+  const [needToRemember, setNeedToRemember] = useState(false);
+
   useEffect(() => {
     // initialize first time values
     setValues({
@@ -81,7 +83,7 @@ export default inject('auth')(observer(function SignIn({ auth }) {
       countryCode: numberData.countryCallingCode,
       phone: numberData.nationalNumber,
       password: values.password
-    });
+    }, needToRemember);
   }
 
   return (
@@ -125,7 +127,13 @@ export default inject('auth')(observer(function SignIn({ auth }) {
             helperText={errors.password}
           />
           <FormControlLabel
-            control={<Checkbox value="remember" color="primary" />}
+            control={
+              <Checkbox 
+                value="remember" 
+                color="primary" 
+                onChange={e => setNeedToRemember(e.target.checked)}
+              />
+            }
             label="Remember me"
           />
           <Button

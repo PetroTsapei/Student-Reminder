@@ -4,18 +4,13 @@ import MainRouter from './routes';
 import Header from '../src/components/global/Header';
 import { inject, observer } from 'mobx-react';
 
-function App(props) {
-  const unavaliableLinks = ['/', '/sign-up'];
-
+function App({ auth }) {
   return (
     <Fragment>
-      {
-        (!unavaliableLinks.includes(props.routing.location.pathname)) &&
-          <Header/>
-      }
+      { auth.token && <Header/> }
       <Route component={MainRouter} />
     </Fragment>
   );
 }
 
-export default inject('routing')(observer(App));
+export default inject('auth')(observer(App));

@@ -1,13 +1,13 @@
-import { observable, action, decorate } from 'mobx';
-import { createContext } from 'react';
-import { persist } from 'mobx-persist';
+import { observable, action } from 'mobx';
+import { persist, create } from 'mobx-persist';
 import AuthApi from '../api/auth';
 
 export class AuthStore {
 
-  token = "";
+  @persist @observable token = "";
 
-  async signIn(signInData) {
+  @action
+  async signIn(signInData, needToRemember) {
     try {
 
       const {
@@ -24,29 +24,27 @@ export class AuthStore {
 
       if (data.verified) {
         this.token = data.token;
+        !needToRemember && localStorage.removeItem('auth');
       }
       
     } catch (error) {
       console.log(error);
-      // console.log(obj);
-      // Alert.alert(
-      //   'Sign In Error',
-      //   obj.error
-      // );
     } finally {
 
     }
   }
 
+  @action
   signOut() {
     this.token = "";
   }
 }
 
-decorate(AuthStore, {
-  token: observable,
-  signIn: action,
-  signOut: action
+const hydrate = create({
+  jsonify: true,
 })
 
-export const AuthStoreContext = createContext(new AuthStore());
+export const authStore = new AuthStore();
+
+// save auth data to localStorage
+hydrate('auth', authStore);

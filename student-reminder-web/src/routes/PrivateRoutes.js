@@ -1,13 +1,14 @@
 import React from 'react';
 import { Route } from 'react-router';
 
+import Home from '../components/Main/Home';
 import NotFound from '../components/global/NotFound';
 
 const routes = [
   {
     path: "/",
     exact: true,
-    component: () => <p>welcome</p>
+    component: Home
   },
   {
     path: "/wishlists",
