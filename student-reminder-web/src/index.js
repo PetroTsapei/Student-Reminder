@@ -7,6 +7,7 @@ import { Provider } from 'mobx-react';
 import { Router } from 'react-router-dom';
 import { createBrowserHistory } from 'history';
 import { authStore } from './stores/AuthStore';
+import { globalAlertsStore } from './stores/GlobalAlertsStore';
 
 const browserHistory = createBrowserHistory();
 const routingStore = new RouterStore();
@@ -16,7 +17,8 @@ const history = syncHistoryWithStore(browserHistory, routingStore);
 /* stores */
 const stores = {
   routing: routingStore,
-  auth: authStore
+  auth: authStore,
+  alerts: globalAlertsStore
 };
 
 ReactDOM.render(

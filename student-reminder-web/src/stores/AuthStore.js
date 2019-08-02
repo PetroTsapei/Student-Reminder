@@ -1,6 +1,7 @@
 import { observable, action } from 'mobx';
 import { persist, create } from 'mobx-persist';
 import AuthApi from '../api/auth';
+import { globalAlertsStore } from '../stores/GlobalAlertsStore';
 
 export class AuthStore {
 
@@ -26,9 +27,12 @@ export class AuthStore {
         this.token = data.token;
         !needToRemember && localStorage.removeItem('auth');
       }
-      
+
     } catch (error) {
-      console.log(error);
+      globalAlertsStore.addAlert({
+        title: "Error",
+        message: error.message
+      });
     } finally {
 
     }
@@ -42,7 +46,7 @@ export class AuthStore {
 
 const hydrate = create({
   jsonify: true,
-})
+});
 
 export const authStore = new AuthStore();
 
