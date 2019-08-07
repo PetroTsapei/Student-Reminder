@@ -14,18 +14,20 @@ export class GlobalAlertsStore {
 
   @action
   addAlert(data) {
+    let id = data.id || Date.now();
     this.alertsObj = {
       ...this.alertsObj,
-      [data.id]: {
+      [id]: {
         ...this.alertInitialState,
+        id,
         ...data
       }
     }
   }
 
   @action
-  removeFromStore() {
-
+  removeFromStore(id) {
+    delete this.alertsObj[id];
   }
 }
 

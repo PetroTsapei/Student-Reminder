@@ -3,7 +3,7 @@ import fetchRequest from '../helpers/request';
 
 export default class AuthApi {
   static signUp(data) {
-    const request = new Request(`${apiUrl}/api/sign_up`, {
+    const request = new Request(`${apiUrl}/sign_up`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

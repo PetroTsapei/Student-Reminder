@@ -24,8 +24,15 @@ export class AuthStore {
       });
 
       if (data.verified) {
-        this.token = data.token;
-        !needToRemember && localStorage.removeItem('auth');
+        if (data.role === "admin") {
+          this.token = data.token;
+          !needToRemember && localStorage.removeItem('auth');
+        } else {
+          globalAlertsStore.addAlert({
+            title: "Access denied",
+            message: "This user isn't admin!"
+          });
+        }
       }
 
     } catch (error) {

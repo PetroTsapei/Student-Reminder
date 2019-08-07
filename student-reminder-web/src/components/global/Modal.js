@@ -8,11 +8,12 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import { inject, observer } from 'mobx-react';
 import PropTypes from 'prop-types';
 
-function AlertDialog({ confirmBtnText, title, message }) {
+function AlertDialog({ confirmBtnText, title, message, removeFromStore }) {
   const [open, setOpen] = React.useState(true);
 
   function handleClose() {
     setOpen(false);
+    removeFromStore();
   }
 
   return (
@@ -42,15 +43,11 @@ function AlertDialog({ confirmBtnText, title, message }) {
 function Modal({ alerts }) {
   return (
     <Fragment>
-      <button onClick={() => alerts.addAlert({
-        confirmBtnText: 'suka',
-        id: Date.now()
-      })}>click me</button>
       {
         Object.values(alerts.alertsObj).map(alertData => (
           <AlertDialog
             key={alertData.id}
-            removeFromStore={alerts.removeFromStore}
+            removeFromStore={() => alerts.removeFromStore(alertData.id)}
             {...alertData}
           />
         ))

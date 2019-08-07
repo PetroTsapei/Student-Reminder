@@ -6,14 +6,9 @@ import NotFound from '../components/global/NotFound';
 
 const routes = [
   {
-    path: "/",
+    path: ['/', '/subjects', '/schedules', '/lessons'],
     exact: true,
     component: Home
-  },
-  {
-    path: "/wishlists",
-    exact: true,
-    component: () => <p>wish list</p>
   },
   {
     path: "/:notFound",

@@ -1,5 +1,7 @@
 const GroupModel = require('../models/group');
+const UserModel = require('../models/user');
 const mongoCodes = require('../constants/mongoCodes');
+const asyncForEach = require('../helpers/asyncForEach');
 const jwt = require('jsonwebtoken');
 
 exports.post = function (req, res) {
@@ -27,6 +29,34 @@ exports.post = function (req, res) {
     }
   });
 };
+
+exports.getAll = function(req, res) {
+  jwt.verify(req.token, req.role, async err => {
+    if (err) {
+      res.sendStatus(403);
+    } else {
+      try {
+        let results = [];
+        let groups = await GroupModel.find();
+
+        await asyncForEach(groups, async item => {
+          let { fullName: groupLeader } = await UserModel.findById(item.groupLeader);
+          let { fullName: groupCurator } = await UserModel.findById(item.groupCurator);
+
+          results.push({
+            ...item._doc,
+            groupLeader,
+            groupCurator
+          });
+        })
+        
+        res.json(results);
+      } catch(err) {
+        res.status(500).json(err);
+      }
+    }
+  })
+}
 
 exports.get = function(req, res) {
   if (!req.params.groupName) {

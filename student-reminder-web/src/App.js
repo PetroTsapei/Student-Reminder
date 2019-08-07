@@ -1,18 +1,26 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { Route } from 'react-router-dom';
+import { makeStyles } from '@material-ui/core/styles';
 import MainRouter from './routes';
-import Header from '../src/components/global/Header';
 import Modal from '../src/components/global/Modal';
-import { inject, observer } from 'mobx-react';
 
-function App({ auth }) {
+const useStyles = makeStyles({
+  wrapper: {
+    display: 'flex',
+    minHeight: '100vh',
+    flexDirection: 'column'
+  },
+});
+
+function App() {
+  const classes = useStyles();
+
   return (
-    <Fragment>
-      { auth.token && <Header/> }
+    <div className={classes.wrapper}>
       <Route component={MainRouter} />
       <Modal />
-    </Fragment>
+    </div>
   );
 }
 
-export default inject('auth')(observer(App));
+export default App

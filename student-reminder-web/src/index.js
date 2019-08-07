@@ -8,6 +8,7 @@ import { Router } from 'react-router-dom';
 import { createBrowserHistory } from 'history';
 import { authStore } from './stores/AuthStore';
 import { globalAlertsStore } from './stores/GlobalAlertsStore';
+import { groupStore } from './stores/GroupStore';
 
 const browserHistory = createBrowserHistory();
 const routingStore = new RouterStore();
@@ -18,7 +19,8 @@ const history = syncHistoryWithStore(browserHistory, routingStore);
 const stores = {
   routing: routingStore,
   auth: authStore,
-  alerts: globalAlertsStore
+  alerts: globalAlertsStore,
+  groups: groupStore
 };
 
 ReactDOM.render(
