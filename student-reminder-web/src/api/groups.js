@@ -25,4 +25,15 @@ export default class GroupsApi {
 
     return fetchRequest(request);
   }
+
+  static getById({ token, id }) {
+    const request = new Request(`${apiUrl}/groups/${id}`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    })
+
+    return fetchRequest(request);
+  }
 }

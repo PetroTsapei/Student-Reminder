@@ -1,8 +1,7 @@
 import { observable, action } from 'mobx';
 import GroupApi from '../api/groups';
-import { globalAlertsStore } from '../stores/GlobalAlertsStore';
 import { authStore } from '../stores/AuthStore';
-import { errorStore } from '../stores/ErrorStore';
+import handleError from '../helpers/handleError';
 
 export class GroupStore {
   @observable groupList = [];
@@ -13,10 +12,7 @@ export class GroupStore {
       this.groupList = await GroupApi.getAll(authStore.token);
 
     } catch (error) {
-      globalAlertsStore.addAlert({
-        title: "Error",
-        message: error.message
-      });
+      handleError(error);
     } finally {
 
     }
@@ -33,14 +29,7 @@ export class GroupStore {
       this.groupList.push(result.group_info);
 
     } catch (error) {
-      if (error.fieldsErrors) {
-        errorStore.add(error.fieldsErrors.errors);
-      } else {
-        globalAlertsStore.addAlert({
-          title: "Error",
-          message: error.message
-        });
-      }
+      handleError(error);
     }
   }
 

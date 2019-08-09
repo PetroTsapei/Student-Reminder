@@ -9,8 +9,11 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Autocomplete from '../../global/Autocomplete';
+import GroupApi from '../../../api/groups';
+import handleError from '../../../helpers/handleError';
+import moment from 'moment';
 
-function AddOrEditGroup({ open, setOpen, groupId, setGroupId, groups, errors }) {
+function AddOrEditGroup({ open, setOpen, groupId, setGroupId, groups, errors, auth }) {
 
   const {
     values,
@@ -26,8 +29,17 @@ function AddOrEditGroup({ open, setOpen, groupId, setGroupId, groups, errors }) 
       groupName: "",
       groupLeader: undefined,
       groupCurator: undefined
+    });
+
+    if (groupId) GroupApi.getById({
+      token: auth.token,
+      id: groupId
+    }).then(doc => {
+      setValues(doc);
     })
-  }, [setValues]);
+    .catch(error => handleError(error))
+
+  }, [setValues, groupId, auth.token]);
 
   function onSubmit(e) {
     if (groupId) return;
@@ -65,6 +77,7 @@ function AddOrEditGroup({ open, setOpen, groupId, setGroupId, groups, errors }) 
             type="text"
             fullWidth
             required
+            value={values.groupName}
             onChange={e => handleChange(e.target.value, 'groupName')}
             error={!!errors.list.groupName}
             helperText={errors.list.groupName && errors.list.groupName.message}
@@ -78,11 +91,21 @@ function AddOrEditGroup({ open, setOpen, groupId, setGroupId, groups, errors }) 
                 label="Group Curator"
                 placeholder="Select a teacher"
                 isLoading={true}
+                value={values.groupCurator && {
+                  label: values.groupCurator,
+                  value: values.groupCurator
+                }}
+                onChange={e => handleChange(e.value, 'groupCurator')}
               />
               <Autocomplete 
                 options={['a', 'b', 'c', 'd', 'e', 'ee']}
                 label="Group Leader"
                 placeholder="Select a student"
+                value={values.groupLeader && {
+                  label: values.groupLeader,
+                  value: values.groupLeader
+                }}
+                onChange={e => handleChange(e.value, 'groupLeader')}
               />
             </>
         }
@@ -99,6 +122,7 @@ function AddOrEditGroup({ open, setOpen, groupId, setGroupId, groups, errors }) 
             inputProps={{
               max: values.releaseDate
             }}
+            value={values.dateOfCreation ? moment(values.dateOfCreation).format('YYYY-MM-DD') : ''}
             required
           />
         </DialogContent>
@@ -115,6 +139,7 @@ function AddOrEditGroup({ open, setOpen, groupId, setGroupId, groups, errors }) 
             inputProps={{
               min: values.dateOfCreation
             }}
+            value={values.releaseDate ? moment(values.releaseDate).format('YYYY-MM-DD') : ''}
             required
           />
         </DialogContent>
@@ -131,4 +156,4 @@ function AddOrEditGroup({ open, setOpen, groupId, setGroupId, groups, errors }) 
   );
 }
 
-export default inject('errors', 'groups')(observer(AddOrEditGroup))
+export default inject('errors', 'groups', 'auth')(observer(AddOrEditGroup))

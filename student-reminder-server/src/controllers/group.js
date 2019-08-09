@@ -59,20 +59,26 @@ exports.getAll = function(req, res) {
 }
 
 exports.get = function(req, res) {
-  if (!req.params.groupName) {
-    return res.status(400).json({ error: 'Missing URL parameter: groupName' });
+  if (!req.params.groupId) {
+    return res.status(400).json({ error: 'Missing URL parameter: groupId' });
   }
 
   jwt.verify(req.token, req.role, err => {
     if (err) {
       res.sendStatus(403);
     } else {
-      GroupModel.findOne({
-        groupName: req.params.groupName
-      })
-        .then(doc => {
-          if (doc) {
-            res.json(doc)
+      GroupModel.findById(req.params.groupId)
+        .then(async data => {
+          if (data) {
+
+            const { fullName: groupCurator } = data.groupCurator ? await UserModel.findById(data.groupCurator) : { fullName: null };
+            const { fullName: groupLeader } = data.groupLeader ? await UserModel.findById(data.groupLeader) : { fullName: null };
+
+            res.json({
+              ...data._doc,
+              groupCurator,
+              groupLeader
+            })
           } else res.status(404).json({ message: "Group not found" });
         })
         .catch(err => {
