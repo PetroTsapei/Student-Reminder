@@ -43,6 +43,7 @@ const UserSchema = new mongoose.Schema({
     enum: ["admin", "teacher", "student"]
   },
   groupLeader: Boolean,
+  groupCurator: Boolean,
   pushToken: String
 });
 

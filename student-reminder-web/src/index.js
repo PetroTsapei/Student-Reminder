@@ -9,6 +9,7 @@ import { createBrowserHistory } from 'history';
 import { authStore } from './stores/AuthStore';
 import { globalAlertsStore } from './stores/GlobalAlertsStore';
 import { groupStore } from './stores/GroupStore';
+import { errorStore } from './stores/ErrorStore';
 
 const browserHistory = createBrowserHistory();
 const routingStore = new RouterStore();
@@ -20,7 +21,8 @@ const stores = {
   routing: routingStore,
   auth: authStore,
   alerts: globalAlertsStore,
-  groups: groupStore
+  groups: groupStore,
+  errors: errorStore
 };
 
 ReactDOM.render(

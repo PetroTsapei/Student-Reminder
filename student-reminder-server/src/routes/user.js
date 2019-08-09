@@ -19,5 +19,6 @@ router.post('/api/sign_in', bodyValidator, UserController.sign_in);
 router.post('/api/resend-code/:id', UserController.resend);
 router.post('/api/verify/:id', UserController.verify);
 router.post('/api/push-token', [tokenVerify], UserController.pushToken);
+router.get('/api/students', [tokenVerify], UserController.students);
 
 module.exports = router;

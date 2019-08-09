@@ -40,8 +40,8 @@ exports.getAll = function(req, res) {
         let groups = await GroupModel.find();
 
         await asyncForEach(groups, async item => {
-          let { fullName: groupLeader } = await UserModel.findById(item.groupLeader);
-          let { fullName: groupCurator } = await UserModel.findById(item.groupCurator);
+          let { fullName: groupLeader } = item.groupLeader ? await UserModel.findById(item.groupLeader) : { fullName: null };
+          let { fullName: groupCurator } = item.groupCurator ? await UserModel.findById(item.groupCurator) : { fullName: null };
 
           results.push({
             ...item._doc,

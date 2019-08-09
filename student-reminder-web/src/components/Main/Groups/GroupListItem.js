@@ -14,7 +14,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function GroupList({ group }) {
+export default function GroupList({ group, edit }) {
   const classes = useStyles();
 
   return (
@@ -34,17 +34,17 @@ export default function GroupList({ group }) {
             Group curator:
           </Typography>
           <Typography gutterBottom variant="body2" color="textSecondary">
-            { group.groupCurator }
+            { group.groupCurator || '-' }
           </Typography>
           <Typography>
               Group leader:
           </Typography>
           <Typography gutterBottom variant="body2" color="textSecondary">
-            { group.groupLeader }
+            { group.groupLeader || '-' }
           </Typography>
         </Grid>
         <Grid item>
-          <IconButton>
+          <IconButton onClick={edit}>
             <Icon>edit_icon</Icon>
           </IconButton>
           <IconButton>

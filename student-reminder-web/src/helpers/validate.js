@@ -5,6 +5,7 @@ export default function validate(values) {
   if (values.phone === '') {
     errors.phone = 'Phone number is required';
   } else if (
+      values.phone &&
       !findNumbers(values.phone, 'UA', {
         v2: true
       }).length
@@ -13,7 +14,7 @@ export default function validate(values) {
   }
   if (values.password === '') {
     errors.password = 'Password is required';
-  } else if (values.password.length < 8) {
+  } else if (values.password && values.password.length < 8) {
     errors.password = 'Password must be 8 or more characters';
   }
   return errors;

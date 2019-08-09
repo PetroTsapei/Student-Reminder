@@ -19,6 +19,7 @@ const useStyles = makeStyles(theme => ({
 function GroupList({ groups }) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
+  const [groupId, setGroupId] = useState('');
 
   useEffect(() => {
     groups.getAll();
@@ -26,9 +27,14 @@ function GroupList({ groups }) {
     return () => groups.setListToInitState();
   }, [groups])
 
+  function editHandler(id) {
+    setGroupId(id);
+    setOpen(true);
+  }
+
   function _renderGroupList() {
     if (groups.groupList.length) {
-      return groups.groupList.map(elem => <GroupListItem key={elem._id} group={elem} /> )
+      return groups.groupList.map(elem => <GroupListItem edit={() => editHandler(elem._id)} key={elem._id} group={elem} /> )
     } else return (
       <div>Not found</div>
     )
@@ -42,7 +48,12 @@ function GroupList({ groups }) {
           <AddIcon />
         </Fab>
       </Tooltip>
-      <AddOrEditGroup title="Add a new group" open={open} setOpen={setOpen} />
+      <AddOrEditGroup
+        groupId={groupId} 
+        open={open} 
+        setOpen={setOpen}
+        setGroupId={setGroupId}
+      />
     </Grid>
   )
 }

@@ -12,4 +12,17 @@ export default class GroupsApi {
 
     return fetchRequest(request);
   }
+
+  static create({ token, ...rest }) {
+    const request = new Request(`${apiUrl}/groups`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(rest)
+    })
+
+    return fetchRequest(request);
+  }
 }

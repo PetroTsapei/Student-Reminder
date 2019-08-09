@@ -19,20 +19,14 @@ const GroupSchema = new mongoose.Schema({
     required: true,
     min: function() { return this.dateOfCreation }
   },
-  groupCurator: {
-    type: ObjectId,
-    required: true
-  },
-  groupLeader: {
-    type: ObjectId,
-    required: true
-  }
+  groupCurator: ObjectId,
+  groupLeader: ObjectId
 });
 
 GroupSchema.pre('validate', function (next) {
   let self = this;
 
-  UserModel.findOne({ _id: self.groupCurator, role: "teacher" })
+  UserModel.findOneAndUpdate({ _id: self.groupCurator, role: "teacher" }, { groupCurator: true })
     .then(doc => {
       if (!doc && self.groupCurator) next({error: "Courator not found"});
       else {
