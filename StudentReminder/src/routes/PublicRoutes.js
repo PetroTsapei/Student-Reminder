@@ -15,11 +15,6 @@ const routes = [
     exact: true,
     component: SignUp
   },
-  {
-    path: "/sign-up/phone",
-    exact: true,
-    component: SignUp
-  },
 ]
 
 const PublicRoutes = () => (

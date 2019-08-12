@@ -1,5 +1,6 @@
 {
   "expo": {
+    "scheme": "myapp",
     "name": "Student Reminder",
     "slug": "StudentReminder",
     "privacy": "public",

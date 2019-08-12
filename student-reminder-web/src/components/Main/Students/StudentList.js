@@ -63,7 +63,6 @@ function StudentList({ goBack, students, groupId }) {
         resolve();
 
       } catch(error) {
-        console.log(error);
         if (error.message) globalAlertsStore.addAlert({
           title: "Error",
           message: error.message
