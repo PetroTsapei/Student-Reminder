@@ -1,9 +1,11 @@
 const UserModel = require('../models/user');
+const GroupModel = require('../models/group');
 const mongoCodes = require('../constants/mongoCodes');
 const tokenVerify = require('../helpers/tokenVerify');
 const roleVerify = require('../helpers/roleVerify');
 const jwt = require('jsonwebtoken');
 const encrypt = require('../helpers/encrypt');
+const emailValidator = require("email-validator");
 
 exports.sign_up = function (req, res) {
   if (req.body.password) req.body.password = encrypt(req.body.password);
@@ -14,6 +16,8 @@ exports.sign_up = function (req, res) {
     if (!req.role) return;
   }
 
+  if (!emailValidator.validate(req.body.email)) return res.status(400).json({ error: "Invalid email" });
+
   let model = new UserModel(req.body);
   model.save()
     .then(doc => {
@@ -21,8 +25,13 @@ exports.sign_up = function (req, res) {
         return res.status(500).send(doc);
       }
 
-      model.sendAuthyToken(error => {
-        if (error) res.status(400).json({ error: error.message });
+      model.sendAuthyToken(async error => {
+        // if (error) res.status(400).json({ error: error.message });
+
+        if (doc.role === 'student' && req.body.groupLeader) {
+          await GroupModel.findByIdAndUpdate(doc.group, { groupLeader: doc._id });
+          doc._doc.groupLeader = true;
+        }
 
         res.status(201).json({
           message: "Your account created, please write authentication code",
@@ -31,7 +40,7 @@ exports.sign_up = function (req, res) {
       });
     })
     .catch(err => {
-      if (err.code === mongoCodes.notRequired) res.status(400).json({ message: "User already created" });
+      if (err.code === mongoCodes.notRequired) res.status(400).json({ error: "User with this email already created" });
       else res.status(500).json(err);
     })
 };
@@ -149,7 +158,7 @@ exports.pushToken = function(req, res) {
       })
         .then(doc => {
           if (doc) res.json(doc);
-          else res.status(404).json({ message: "User not found" });
+          else res.status(404).json({ error: "User not found" });
         })
         .catch(err => {
           res.status(500).json(err)
@@ -158,6 +167,24 @@ exports.pushToken = function(req, res) {
   })
 }
 
-exports.students = function(req, res) {
-  
+exports.students = async function(req, res) {
+  try {
+    const group = await GroupModel.findById(req.params.groupId);
+
+    if (group) {
+      let result = await UserModel.find({ group: group._id }, '-__v -password -role -pushToken');
+
+      if (group.groupLeader) {
+        result.map(e => e._id == group.groupLeader.toString() && (e._doc.groupLeader = true));
+      }
+
+      res.json({
+        result,
+        groupName: group.groupName
+      });
+    } else res.status(404).json({ error: "Group not found" });
+
+  } catch(error) {
+    res.status(500).json({ error: error.message });
+  }
 }

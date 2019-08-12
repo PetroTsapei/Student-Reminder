@@ -34,7 +34,10 @@ function GroupList({ groups }) {
 
   function _renderGroupList() {
     if (groups.groupList.length) {
-      return groups.groupList.map(elem => <GroupListItem edit={() => editHandler(elem._id)} key={elem._id} group={elem} /> )
+      return groups.groupList.map(elem => <GroupListItem edit={e => {
+        e.preventDefault();
+        editHandler(elem._id);
+      }} key={elem._id} group={elem} /> )
     } else return (
       <div>Not found</div>
     )

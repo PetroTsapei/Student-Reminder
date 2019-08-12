@@ -7,7 +7,9 @@ import SubjectIcon from '@material-ui/icons/Book';
 import ScheduleIcon from '@material-ui/icons/Schedule';
 
 export default function LabelBottomNavigation({ history }) {
-  const [value, setValue] = React.useState(history.location.pathname);
+  const links = ['/', '/subjects', '/schedules', '/lessons'];
+  const initValue = links.includes(history.location.pathname) ? history.location.pathname : '/';
+  const [value, setValue] = React.useState(initValue);
 
   function handleChange(event, newValue) {
     setValue(newValue);

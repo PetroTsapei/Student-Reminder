@@ -5,6 +5,7 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import Header from '../global/Header';
 import BottomNavigation from '../global/BottomNavigation';
 import GroupList from './Groups/GroupList';
+import StudentList from './Students/StudentList';
 
 const useStyles = makeStyles({
   root: {
@@ -15,14 +16,17 @@ const useStyles = makeStyles({
   },
 });
 
-export default function Home({ history }) {
+export default function Home({ history, match }) {
   const classes = useStyles();
 
   function _renderForm() {
     switch(history.location.pathname) {
       case '/':
         return <GroupList />
-      default: return
+      case '/subjects': return
+      case '/schedules': return
+      case '/lessons': return
+      default: return <StudentList goBack={history.goBack} groupId={match.params.groupId} />
     }
   }
 

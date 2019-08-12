@@ -27,7 +27,7 @@ const UserSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: true
+    required: function() { return this.role !== 'student' },
   },
   group: {
     type: ObjectId,
@@ -42,8 +42,6 @@ const UserSchema = new mongoose.Schema({
     required: true,
     enum: ["admin", "teacher", "student"]
   },
-  groupLeader: Boolean,
-  groupCurator: Boolean,
   pushToken: String
 });
 

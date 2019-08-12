@@ -6,7 +6,7 @@ import NotFound from '../components/global/NotFound';
 
 const routes = [
   {
-    path: ['/', '/subjects', '/schedules', '/lessons'],
+    path: ['/', '/subjects', '/schedules', '/lessons', '/students/:groupId'],
     exact: true,
     component: Home
   },

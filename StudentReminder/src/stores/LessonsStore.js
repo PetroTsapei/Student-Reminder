@@ -22,11 +22,17 @@ export class LessonsStore {
       this.lessons = results;
 
     } catch (error) {
-      console.log(error);
-      Alert.alert(
-        'Error',
-        'An error occurred'
-      )
+      if (error.message) {
+        Alert.alert(
+          'Error',
+          error.message
+        )
+      } else {
+        Alert.alert(
+          'Error',
+          'An error occurred'
+        )
+      }
     } finally {
       this.rootStore.fetchingStore.setFetchState(false);
     }
