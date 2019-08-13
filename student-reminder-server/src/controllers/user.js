@@ -5,7 +5,9 @@ const tokenVerify = require('../helpers/tokenVerify');
 const roleVerify = require('../helpers/roleVerify');
 const jwt = require('jsonwebtoken');
 const encrypt = require('../helpers/encrypt');
-const emailValidator = require("email-validator");
+const emailValidator = require('email-validator');
+const sendEmail = require('../helpers/sendEmail');
+require('dotenv').config();
 
 exports.sign_up = function (req, res) {
   if (req.body.password) req.body.password = encrypt(req.body.password);
@@ -28,9 +30,24 @@ exports.sign_up = function (req, res) {
       model.sendAuthyToken(async error => {
         // if (error) res.status(400).json({ error: error.message });
 
-        if (doc.role === 'student' && req.body.groupLeader) {
-          await GroupModel.findByIdAndUpdate(doc.group, { groupLeader: doc._id });
-          doc._doc.groupLeader = true;
+        if (doc.role === 'student') {
+          if (req.body.groupLeader) {
+            await GroupModel.findByIdAndUpdate(doc.group, {groupLeader: doc._id});
+            doc._doc.groupLeader = true;
+          }
+
+          let { groupName } = await GroupModel.findById(doc.group);
+
+          return sendEmail(req, res, {
+            to: doc.email,
+            subject: `Welcome to ${groupName}, you was added in studentReminder app`,
+            html: `Link to finished registration: <a href="${process.env.CLIENT_URL}/redirect?url=${process.env.MOBILE_HOST}?phone=${doc.countryCode}${doc.phone}&id=${doc._id}">Open app</a>`
+          }, () => {
+            res.status(201).json({
+              message: "Your account created",
+              user_info: doc
+            });
+          });
         }
 
         res.status(201).json({

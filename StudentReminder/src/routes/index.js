@@ -16,8 +16,9 @@ export default MainRouter = observer(({ history }) => {
 
       const linkParse = url => {
         let { queryParams } = Linking.parse(url);
+        console.log(queryParams);
         if (Object.keys(queryParams).length) history.push('/sign-up');
-      }
+      };
 
       Linking.addEventListener('url', data => linkParse(data.url));
       let url = await Linking.getInitialURL();
@@ -36,7 +37,7 @@ export default MainRouter = observer(({ history }) => {
 
   useEffect(() => {
     getInitialUrl();
-  }, [])
+  }, []);
 
   if (isDeepLink) return; 
 
