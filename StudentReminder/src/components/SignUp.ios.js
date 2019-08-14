@@ -1,5 +1,5 @@
-import React, { useContext } from 'react';
-import {Text, View, AlertIOS} from 'react-native';
+import React, { useContext, useEffect, useState } from 'react';
+import { Alert } from 'react-native';
 import { 
   Container, 
   Header, 
@@ -13,91 +13,130 @@ import {
   Right,
   Body,
   Button,
-  Icon
+  Icon,
+  Spinner,
+  Text
 } from 'native-base';
-import {observer} from 'mobx-react-lite';
+import validate from '../helpers/validate';
+import { useForm } from '../helpers/customHooks';
+import { observer } from 'mobx-react-lite';
+import { findNumbers } from 'libphonenumber-js';
 import { RootStoreContext } from '../stores/RootStore';
-import PhoneAuth from 'react-native-phone-auth-component';
 
 import styles from '../assets/styles/SignUp';
+import AuthApi from "../api/auth";
 
 
 export const SignUp = observer(({ history }) => {
-  const authStore = useContext(RootStoreContext);
+  const rootStore = useContext(RootStoreContext);
+  const [linkVerified, setLinkVerified] = useState(false);
 
-  function signUpForm() {
-    return (
-      <>
-        <Header>
-          <Left>
-            <Button transparent onPress={() => history.goBack()}>
-              <Icon name='ios-arrow-back' />
-            </Button>
-          </Left>
-          <Body>
-            <Title>
-              Sign Up
-            </Title>
-          </Body>
-          <Right />
-        </Header>
-        <Content>
-          <Form style={styles.form}>
-            <Item floatingLabel>
-              {/* <Icon name='home' /> */}
-              <Label>Phone Number</Label>
-              <Input 
-                keyboardType={'phone-pad'}
-                returnKeyType='done'
-                autoCorrect={false}
-              />
-            </Item>
-            <Item floatingLabel last>
-              <Label>Password</Label>
-              <Input 
-                secureTextEntry={true}
-              />
-            </Item>
-            <Button rounded style={styles.buttonSignIn}>
-              <Text>Sign In</Text>
-            </Button>
-          </Form>
-        </Content>
-      </>
-    )
-  }
+  const {
+    values,
+    errors,
+    handleChange,
+    handleSubmit,
+    setValues
+  } = useForm(onConfirm, validate);
 
-  function tabs() {
-    switch(history.location.pathname) {
-      case '/sign-up' : return signUpForm()
-      case '/sign-up/phone': {
-        return (
-          <PhoneAuth
-            signInWithPhone={phone => new Promise((res, rej) => {
-              console.log(phone);
-              return rej()
-            })}
-            redeemCode={code => AlertIOS('Please attach method to redeemCode prop')}
-            codeLength={7}
-            buttonTextColor='black'
-            spinnerColor='black'
-            color='#ff8203'
-            androidFont='monospace'
-            iOSFont='Menlo'
-            containerStyle={{flex: 1}}
-            verifyButtonMessage='Sign up'
-            disclaimerMessage='Enter your phone number'
-            cca2='UA'
-            callingCode='380'
-          />
-        )
-      }
+  async function validateDeepLink(userId) {
+    try {
+
+      await AuthApi.validateDeepLink(userId);
+
+      setValues({
+        phone: `+${history.location.queryParams.phone}`,
+        password: ""
+      })
+
+    } catch (data) {
+      Alert.alert(
+        'Error',
+        data.error,
+        [
+          {text: 'OK', onPress: () => history.push('/')},
+        ]
+      );
+    } finally {
+      setLinkVerified(true);
     }
   }
 
+  function onConfirm() {
+    let numberData = findNumbers(values.phone, 'UA', {
+      v2: true
+    })[0].number;
+
+    rootStore.authStore.finishRegistration(history.location.queryParams.id, {
+      countryCode: `+${numberData.countryCallingCode}`,
+      phone: numberData.nationalNumber,
+      password: values.password
+    });
+  }
+
+  useEffect(() => {
+    validateDeepLink(history.location.queryParams.id);
+  }, []);
+
+
+  if (!linkVerified) return <Spinner style={{ flex: 1 }} color='blue' />;
+
   return (
     <Container>
-      { tabs() }
+      <Header>
+        <Left>
+          <Button transparent onPress={() => history.goBack()}>
+            <Icon name='ios-arrow-back' />
+          </Button>
+        </Left>
+        <Body>
+          <Title>
+            Finish sign up
+          </Title>
+        </Body>
+        <Right />
+      </Header>
+      <Content>
+        <Form style={styles.form}>
+          <Item floatingLabel last error={!!errors.phone}>
+            {/* <Icon name='home' /> */}
+            {
+              errors.phone ?
+                <Label style={styles.error}>{errors.phone}</Label>
+                :
+                <Label>Phone Number</Label>
+            }
+            <Input
+              keyboardType={'phone-pad'}
+              returnKeyType='done'
+              maxLength={15}
+              value={values.phone}
+              onChangeText={text => handleChange(text, 'phone')}
+            />
+          </Item>
+          <Item floatingLabel last error={!!errors.password}>
+            {
+              errors.password ?
+                <Label style={styles.error}>{errors.password}</Label>
+                :
+                <Label>Set password for your account</Label>
+            }
+            <Input
+              secureTextEntry={true}
+              value={values.password}
+              onChangeText={text => handleChange(text, 'password')}
+            />
+          </Item>
+          <Button primary rounded style={styles.button} onPress={handleSubmit}>
+            {
+              rootStore.fetchingStore.isFetching ?
+                <Spinner color='black'/>
+                  :
+                <Text>Sign Up</Text>
+            }
+          </Button>
+        </Form>
+      </Content>
     </Container>
   )
 });

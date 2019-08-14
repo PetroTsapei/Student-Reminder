@@ -41,7 +41,7 @@ exports.sign_up = function (req, res) {
           return sendEmail(req, res, {
             to: doc.email,
             subject: `Welcome to ${groupName}, you was added in studentReminder app`,
-            html: `Link to finished registration: <a href="${process.env.CLIENT_URL}/redirect?url=${process.env.MOBILE_HOST}?phone=${doc.countryCode}${doc.phone}&id=${doc._id}">Open app</a>`
+            html: `Link to finished registration: <a href="${process.env.CLIENT_URL}/redirect?url=${process.env.MOBILE_HOST}?phone=${doc.countryCode.replace('+', '')}${doc.phone}&id=${doc._id}">Open app</a>`
           }, () => {
             res.status(201).json({
               message: "Your account created",
@@ -118,7 +118,7 @@ exports.resend = function(req, res) {
     .catch(err => {
       res.status(500).json({ error: err.message || err });
     })
-}
+};
 
 exports.verify = function(req, res) {
   let user = {};
@@ -160,7 +160,7 @@ exports.verify = function(req, res) {
     .catch(err => {
       res.status(500).json({ error: err.message || err });
     })
-}
+};
 
 exports.pushToken = function(req, res) {
   decodeJWT = jwt.decode(req.token);
@@ -182,7 +182,7 @@ exports.pushToken = function(req, res) {
         })
     }
   })
-}
+};
 
 exports.students = async function(req, res) {
   try {
@@ -204,4 +204,43 @@ exports.students = async function(req, res) {
   } catch(error) {
     res.status(500).json({ error: error.message });
   }
-}
+};
+
+exports.deepLinkValidate = async function (req, res) {
+  try {
+    const data = await UserModel.findById(req.params.userId);
+
+    if (!data) return res.status(404).json({ error: "User not found" });
+    else if (data.verified) return res.status(400).json({ error: "User already confirmed his account" });
+
+    res.status(200).json({ message: "Need to confirm account" });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+exports.finishRegistration = async function (req, res) {
+  try {
+
+    const user = await UserModel.findById(req.params.userId);
+
+    if (!user) return res.status(404).json({ error: "User not found" });
+    else if (user.verified) return res.status(400).json({ error: "User already verified" });
+
+    await UserModel.findByIdAndUpdate(req.params.userId, {
+      $set: {
+        countryCode: req.body.countryCode,
+        phone: req.body.phone,
+        password: encrypt(req.body.password),
+        verified: true
+      }
+    });
+
+    res.status(200).json({ message: 'Successfully registered'});
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: error.message });
+  }
+};

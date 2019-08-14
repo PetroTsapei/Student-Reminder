@@ -32,5 +32,7 @@ router.post('/api/resend-code/:id', UserController.resend);
 router.post('/api/verify/:id', UserController.verify);
 router.post('/api/push-token', [tokenVerify], UserController.pushToken);
 router.get('/api/students/:groupId', [tokenVerify, setCurrentRole, tokenValidate], UserController.students);
+router.get('/api/deep-link-validate/:userId', UserController.deepLinkValidate);
+router.put('/api/finish-registration/:userId', UserController.finishRegistration);
 
 module.exports = router;

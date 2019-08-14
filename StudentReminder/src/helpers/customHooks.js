@@ -50,5 +50,6 @@ export const useForm = (callback, validate) => {
     handleSubmit,
     values,
     errors,
+    setValues
   }
 };

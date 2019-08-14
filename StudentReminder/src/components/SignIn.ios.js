@@ -1,8 +1,8 @@
 import React, { useContext } from 'react';
 import { useForm } from '../helpers/customHooks';
 import validate from '../helpers/validate';
-import { findNumbers } from 'libphonenumber-js'
-import {Text, View} from 'react-native';
+import { findNumbers } from 'libphonenumber-js';
+import { Text } from 'react-native';
 import {
   Container,
   Header, 
@@ -24,7 +24,7 @@ import { RootStoreContext } from '../stores/RootStore';
 
 import styles from '../assets/styles/SignIn';
 
-export const SignIn = observer(({ history }) => {
+export const SignIn = observer(() => {
   const rootStore = useContext(RootStoreContext);
 
   const {
@@ -40,7 +40,7 @@ export const SignIn = observer(({ history }) => {
     })[0].number;
 
     rootStore.authStore.signIn({
-      countryCode: numberData.countryCallingCode,
+      countryCode: `+${numberData.countryCallingCode}`,
       phone: numberData.nationalNumber,
       password: values.password
     });
@@ -89,10 +89,6 @@ export const SignIn = observer(({ history }) => {
               onChangeText={text => handleChange(text, 'password')}
             />
           </Item>
-          <Button transparent style={styles.signUpButton} onPress={() => history.push('/sign-up')}>
-              <Text>Don't have an account? </Text>
-              <Text style={styles.signUpButtonText}>Sign Up</Text>
-          </Button>
         </Form>
       </Content>
       <Button disabled={rootStore.fetchingStore.isFetching} block large warning onPress={handleSubmit}>
@@ -105,4 +101,4 @@ export const SignIn = observer(({ history }) => {
       </Button>
     </Container>
   )
-})
+});

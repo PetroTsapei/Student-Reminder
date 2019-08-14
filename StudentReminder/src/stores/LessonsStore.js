@@ -1,6 +1,6 @@
-import { observable, action } from 'mobx';
+import {action, observable} from 'mobx';
 import LessonsApi from '../api/lessons';
-import { Alert } from 'react-native';
+import {Alert} from 'react-native';
 
 export class LessonsStore {
   constructor(rootStore) {
@@ -14,12 +14,10 @@ export class LessonsStore {
     try {
 
       this.rootStore.fetchingStore.setFetchState(true);
-      const results = await LessonsApi.getAll({
+      this.lessons = await LessonsApi.getAll({
         ...data,
         token: this.rootStore.authStore.token
-      })
-
-      this.lessons = results;
+      });
 
     } catch (error) {
       if (error.message) {

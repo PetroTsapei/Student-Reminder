@@ -16,8 +16,12 @@ export default MainRouter = observer(({ history }) => {
 
       const linkParse = url => {
         let { queryParams } = Linking.parse(url);
-        console.log(queryParams);
-        if (Object.keys(queryParams).length) history.push('/sign-up');
+        if (Object.keys(queryParams).length) history.push({
+          pathname: '/sign-up',
+          queryParams: {
+            ...queryParams
+          }
+        });
       };
 
       Linking.addEventListener('url', data => linkParse(data.url));

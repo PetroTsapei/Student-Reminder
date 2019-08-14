@@ -29,7 +29,7 @@ export const Lessons = observer(() => {
     rootStore.lessonsStore.getLessons({
       typeOfTime: "short",
       groupName: rootStore.authStore.group
-    })
+    });
 
     setRefreshing(false);
   }, [refreshing]);
@@ -51,7 +51,7 @@ export const Lessons = observer(() => {
         
         if (!lessonsForDayOfWeek.length) {
           weekLessons.push(notification('No lessons for this day'))
-        };
+        }
         if (new Date().getDay() == day) initialPage = day - 1; // tabs start numerate from 0
 
         lessonsForDayOfWeek.forEach((lessonItem, key) => {
@@ -75,7 +75,7 @@ export const Lessons = observer(() => {
               </CardItem>
             </Card>
           )
-        })
+        });
 
         if (weekLessons.length) {
           tabArr.push(
@@ -123,4 +123,4 @@ export const Lessons = observer(() => {
       { renderTabs() }
     </>
   )
-})
+});

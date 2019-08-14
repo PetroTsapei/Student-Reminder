@@ -21,7 +21,7 @@ export default class AuthApi {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(data)
-    });
+    })
   }
 
   static pushToken({ pushToken, token }) {
@@ -32,7 +32,23 @@ export default class AuthApi {
         "Authorization" : `Bearer ${token}`
       },
       body: JSON.stringify({pushToken})
-    });
+    })
+  }
+
+  static validateDeepLink(userId) {
+    return fetchRequest(`${apiUrl}/deep-link-validate/${userId}`, {
+      method: "GET"
+    })
+  }
+
+  static finishRegistration(id, data) {
+    return fetchRequest(`${apiUrl}/finish-registration/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data)
+    })
   }
 
 }

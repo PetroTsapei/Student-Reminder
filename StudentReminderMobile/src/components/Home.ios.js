@@ -32,7 +32,7 @@ export const Home = ({ history }) => {
   const onSignOut = () => {
     rootStore.authStore.signOut();
     history.push('/');
-  }
+  };
 
   getCurrentLocation = () => {
     // TODO fix it

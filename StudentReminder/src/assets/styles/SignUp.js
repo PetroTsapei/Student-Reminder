@@ -8,11 +8,14 @@ const ios = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center'
   },
-  buttonSignIn: {
+  button: {
     width: '90%',
     justifyContent: 'center',
-    color: '#fff',
+    color: '#FFFFFF',
     marginTop: 15
+  },
+  error: {
+    color: '#e83540'
   }
 });
 

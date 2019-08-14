@@ -11,22 +11,39 @@ export class AuthStore {
   @persist @observable token = "";
   @persist @observable group = "";
 
+  static handleError(obj) {
+    if (obj.error) Alert.alert(
+      'Sign In Error',
+      obj.error
+    );
+    else Alert.alert(
+      'Error',
+      'An error occurred'
+    )
+  }
+
+  @action
+  async finishRegistration(id, data) {
+    try {
+      this.rootStore.fetchingStore.setFetchState(true);
+      const { message } = await AuthApi.finishRegistration(id, data);
+
+      Alert.alert(message, 'Sign In in this account?', [
+        {text: 'No', onPress: () => null},
+        {text: 'Yes', onPress: () => this.signIn(data)},
+      ])
+    } catch (obj) {
+      AuthStore.handleError(obj);
+    } finally {
+      this.rootStore.fetchingStore.setFetchState(false);
+    }
+  }
+
   @action
   async signIn(signInData) {
     try {
-
-      const {
-        countryCode,
-        phone,
-        password
-      } = signInData;
-
       this.rootStore.fetchingStore.setFetchState(true);
-      const data = await AuthApi.signIn({
-        countryCode: `+${countryCode}`,
-        phone,
-        password
-      });
+      const data = await AuthApi.signIn(signInData);
 
       if (data.verified) {
         this.token = data.token;
@@ -34,14 +51,7 @@ export class AuthStore {
       }
       
     } catch (obj) {
-      if (obj.error) Alert.alert(
-        'Sign In Error',
-        obj.error
-      );
-      else Alert.alert(
-        'Error',
-        'An error occurred'
-      )
+      AuthStore.handleError(obj);
     } finally {
       this.rootStore.fetchingStore.setFetchState(false);
     }
