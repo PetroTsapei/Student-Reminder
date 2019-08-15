@@ -1,19 +1,21 @@
 import React from 'react';
-import {View, Text} from 'react-native';
+import withRouterStore from '../helpers/withRouterStore';
+import { View, Text } from 'react-native';
 import { Route } from 'react-router-native';
 import { Home } from '../components/Home';
 import { SignUp } from '../components/SignUp';
+import routerStore from '../stores/RouterStore';
 
 const routes = [
   {
     path: "/sign-up",
     exact: true,
-    component: SignUp
+    component: withRouterStore(routerStore)(SignUp)
   },
   {
     path: ['/', '/:settings', '/:lessons'],
     exact: true,
-    component: Home
+    component: withRouterStore(routerStore)(Home)
   },
   {
     path: "/lessons",

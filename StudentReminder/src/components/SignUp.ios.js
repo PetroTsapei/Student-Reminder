@@ -75,7 +75,7 @@ export const SignUp = observer(({ history }) => {
   }
 
   useEffect(() => {
-    validateDeepLink(history.location.queryParams.id);
+    if (history.location.queryParams) validateDeepLink(history.location.queryParams.id);
   }, []);
 
 

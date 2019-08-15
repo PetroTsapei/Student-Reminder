@@ -2,6 +2,7 @@ import { observable, action } from 'mobx';
 import { persist } from 'mobx-persist';
 import AuthApi from '../api/auth';
 import { Alert } from 'react-native';
+import routerStore from '../stores/RouterStore';
 
 export class AuthStore {
   constructor(rootStore) {
@@ -29,8 +30,12 @@ export class AuthStore {
       const { message } = await AuthApi.finishRegistration(id, data);
 
       Alert.alert(message, 'Sign In in this account?', [
-        {text: 'No', onPress: () => null},
-        {text: 'Yes', onPress: () => this.signIn(data)},
+        {text: 'No', onPress: () => routerStore.history.push('/')},
+        {text: 'Yes', onPress: () => {
+          this.signOut();
+          this.signIn(data);
+          routerStore.history.push('/');
+        }},
       ])
     } catch (obj) {
       AuthStore.handleError(obj);

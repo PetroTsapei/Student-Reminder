@@ -1,21 +1,23 @@
 import React from 'react';
+import withRouterStore from '../helpers/withRouterStore';
 import { Route } from 'react-router-native';
 
 import { SignUp } from '../components/SignUp';
 import { SignIn } from '../components/SignIn';
+import routerStore from '../stores/RouterStore';
 
 const routes = [
   {
     path: "/",
     exact: true,
-    component: SignIn
+    component: withRouterStore(routerStore)(SignIn)
   },
   {
     path: "/sign-up",
     exact: true,
-    component: SignUp
+    component: withRouterStore(routerStore)(SignUp)
   },
-]
+];
 
 const PublicRoutes = () => (
   routes.map((route, i) => <Route key={i} {...route}/>)
