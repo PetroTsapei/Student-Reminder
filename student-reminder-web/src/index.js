@@ -11,6 +11,7 @@ import { globalAlertsStore } from './stores/GlobalAlertsStore';
 import { groupStore } from './stores/GroupStore';
 import { errorStore } from './stores/ErrorStore';
 import { studentStore } from './stores/StudentStore';
+import { subjectStore } from './stores/SubjectStore';
 
 const browserHistory = createBrowserHistory();
 const routingStore = new RouterStore();
@@ -24,7 +25,8 @@ const stores = {
   alerts: globalAlertsStore,
   groups: groupStore,
   errors: errorStore,
-  students: studentStore
+  students: studentStore,
+  subjects: subjectStore
 };
 
 ReactDOM.render(

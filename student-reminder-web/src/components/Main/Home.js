@@ -6,6 +6,7 @@ import Header from '../global/Header';
 import BottomNavigation from '../global/BottomNavigation';
 import GroupList from './Groups/GroupList';
 import StudentList from './Students/StudentList';
+import Subjects from './Subjects';
 
 const useStyles = makeStyles({
   root: {
@@ -22,10 +23,10 @@ export default function Home({ history, match }) {
   function _renderForm() {
     switch(history.location.pathname) {
       case '/':
-        return <GroupList />
-      case '/subjects': return
-      case '/schedules': return
-      case '/lessons': return
+        return <GroupList />;
+      case '/subjects': return <Subjects />;
+      case '/schedules': return;
+      case '/lessons': return;
       default: return <StudentList goBack={history.goBack} groupId={match.params.groupId} />
     }
   }

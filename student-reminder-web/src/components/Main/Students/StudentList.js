@@ -26,7 +26,7 @@ function StudentList({ goBack, students, groupId }) {
     return () => {
       students.setToInitState();
     }
-  }, [students, groupId])
+  }, [students, groupId]);
 
   function onRowAdd(newData) {
     return new Promise(async (resolve, reject) => {
@@ -66,11 +66,11 @@ function StudentList({ goBack, students, groupId }) {
         if (error.message) globalAlertsStore.addAlert({
           title: "Error",
           message: error.message
-        })
+        });
         else if (error.fieldsErrors) globalAlertsStore.addAlert({
           title: "Error",
           message: Object.values(error.fieldsErrors.errors)[0].message
-        })
+        });
         reject(error);
       }
     })
