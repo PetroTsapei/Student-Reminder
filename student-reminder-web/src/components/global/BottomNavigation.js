@@ -23,7 +23,7 @@ export default function LabelBottomNavigation({ history }) {
     <BottomNavigation value={value} onChange={handleChange}>
       <BottomNavigationAction label="Groups" value="/" icon={<GroupIcon />} />
       <BottomNavigationAction label="Subjects" value={`/subjects${history.location.search}`} icon={<SubjectIcon />} />
-      <BottomNavigationAction label="Schedules" value="/schedules" icon={<ScheduleIcon />} />
+      <BottomNavigationAction label="Schedules" value={`/schedules${history.location.search}`} icon={<ScheduleIcon />} />
       <BottomNavigationAction label="Lessons" value="/lessons" icon={<LibraryBooks />} />
     </BottomNavigation>
   );

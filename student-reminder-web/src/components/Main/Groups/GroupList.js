@@ -25,7 +25,7 @@ function GroupList({ groups }) {
     groups.getAll();
 
     return () => groups.setListToInitState();
-  }, [groups])
+  }, [groups]);
 
   function editHandler(id) {
     setGroupId(id);

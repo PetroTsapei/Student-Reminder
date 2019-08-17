@@ -12,6 +12,7 @@ import { groupStore } from './stores/GroupStore';
 import { errorStore } from './stores/ErrorStore';
 import { studentStore } from './stores/StudentStore';
 import { subjectStore } from './stores/SubjectStore';
+import { scheduleStore } from './stores/ScheduleStore';
 
 const browserHistory = createBrowserHistory();
 const routingStore = new RouterStore();
@@ -26,7 +27,8 @@ const stores = {
   groups: groupStore,
   errors: errorStore,
   students: studentStore,
-  subjects: subjectStore
+  subjects: subjectStore,
+  schedules: scheduleStore
 };
 
 ReactDOM.render(

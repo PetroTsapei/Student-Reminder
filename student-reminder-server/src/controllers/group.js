@@ -48,7 +48,7 @@ exports.getAll = function(req, res) {
             groupLeader,
             groupCurator
           });
-        })
+        });
         
         res.json(results);
       } catch(err) {
@@ -56,7 +56,7 @@ exports.getAll = function(req, res) {
       }
     }
   })
-}
+};
 
 exports.get = function(req, res) {
   if (!req.params.groupId) {
@@ -86,7 +86,7 @@ exports.get = function(req, res) {
         })
     }
   })
-}
+};
 
 exports.put = function(req, res) {
   if (!req.params.groupName) {
@@ -111,7 +111,7 @@ exports.put = function(req, res) {
         })
     }
   })
-}
+};
 
 exports.delete = function(req, res) {
   if (!req.params.groupName) {
@@ -134,4 +134,4 @@ exports.delete = function(req, res) {
         })
     }
   })
-}
+};

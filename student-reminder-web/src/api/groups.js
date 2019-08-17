@@ -8,7 +8,7 @@ export default class GroupsApi {
       headers: {
         "Authorization" : `Bearer ${token}`,
       }
-    })
+    });
 
     return fetchRequest(request);
   }
@@ -21,7 +21,7 @@ export default class GroupsApi {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(rest)
-    })
+    });
 
     return fetchRequest(request);
   }
@@ -32,7 +32,7 @@ export default class GroupsApi {
       headers: {
         "Authorization": `Bearer ${token}`
       }
-    })
+    });
 
     return fetchRequest(request);
   }

@@ -26,7 +26,7 @@ exports.post = function(req, res) {
         })
     }
   })
-}
+};
 
 exports.put = function(req, res) {
   if (!req.params.id) {
@@ -47,7 +47,8 @@ exports.put = function(req, res) {
           else res.status(404).json({ message: "Subject not found" });
         })
         .catch(err => {
-          res.status(500).json(err)
+          if (err.code === mongoCodes.notRequired) res.status(400).json({ error: "Subject already exist" });
+          else res.status(500).json(err)
         })
     }
   })
@@ -104,4 +105,4 @@ exports.delete = function(req, res) {
         })
     }
   })
-}
+};

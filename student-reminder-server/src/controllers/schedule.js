@@ -24,7 +24,7 @@ exports.post = function(req, res) {
         })
     }
   })
-}
+};
 
 exports.getAll = function(req, res) {
   jwt.verify(req.token, req.role, err => {
@@ -54,7 +54,7 @@ exports.getAll = function(req, res) {
         })
     }
   })
-}
+};
 
 exports.put = function(req, res) {
   if (!req.params.id) {
@@ -79,7 +79,7 @@ exports.put = function(req, res) {
         })
     }
   })
-}
+};
 
 exports.delete = function(req, res) {
   if (!req.params.id) {
@@ -102,4 +102,4 @@ exports.delete = function(req, res) {
         })
     }
   })
-}
+};
