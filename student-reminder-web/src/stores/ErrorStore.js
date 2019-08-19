@@ -12,6 +12,11 @@ export class ErrorStore {
   }
 
   @action
+  removeFromList(name) {
+    delete this.list[name];
+  }
+
+  @action
   setListToInitState() {
     this.list = {};
   }

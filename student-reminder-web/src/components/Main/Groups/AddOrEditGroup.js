@@ -98,7 +98,7 @@ function AddOrEditGroup({ open, setOpen, groupId, setGroupId, groups, errors, au
                 onChange={e => handleChange(e.value, 'groupCurator')}
               />
               <Autocomplete 
-                options={['a', 'b', 'c', 'd', 'e', 'ee']}
+                options={[]}
                 label="Group Leader"
                 placeholder="Select a student"
                 value={values.groupLeader && {

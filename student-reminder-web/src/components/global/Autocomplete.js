@@ -79,7 +79,7 @@ NoOptionsMessage.propTypes = {
   /**
    * Props to be passed on to the wrapper.
    */
-  innerProps: PropTypes.object.isRequired,
+  // innerProps: PropTypes.object.isRequired,
   selectProps: PropTypes.object.isRequired,
 };
 
@@ -168,7 +168,7 @@ Option.propTypes = {
    */
   innerProps: PropTypes.shape({
     id: PropTypes.string.isRequired,
-    key: PropTypes.string.isRequired,
+    // key: PropTypes.string.isRequired,
     onClick: PropTypes.func.isRequired,
     onMouseMove: PropTypes.func.isRequired,
     onMouseOver: PropTypes.func.isRequired,
@@ -183,7 +183,7 @@ Option.propTypes = {
     PropTypes.shape({
       current: PropTypes.any.isRequired,
     }),
-  ]).isRequired,
+  ]),
   /**
    * Whether the option is focused.
    */
@@ -231,7 +231,7 @@ SingleValue.propTypes = {
   /**
    * Props passed to the wrapping element for the group.
    */
-  innerProps: PropTypes.any.isRequired,
+  innerProps: PropTypes.any,
   selectProps: PropTypes.object.isRequired,
 };
 
@@ -303,7 +303,7 @@ const components = {
   ValueContainer,
 };
 
-export default function IntegrationReactSelect({ options, label, placeholder, ...rest }) {
+export default function NoOptionsMessageIntegrationReactSelect({ label, required, error, ...rest }) {
   const classes = useStyles();
   const theme = useTheme();
   const [single, setSingle] = React.useState(null);
@@ -322,11 +322,6 @@ export default function IntegrationReactSelect({ options, label, placeholder, ..
     }),
   };
 
-  const suggestions = options.map(suggestion => ({
-    value: suggestion,
-    label: suggestion,
-  }));
-
   return (
     <div className={classes.root}>
       <NoSsr>
@@ -340,9 +335,9 @@ export default function IntegrationReactSelect({ options, label, placeholder, ..
               htmlFor: 'react-select-single',
               shrink: true,
             },
+            required,
+            error
           }}
-          placeholder={placeholder}
-          options={suggestions}
           components={components}
           value={single}
           onChange={handleChangeSingle}
@@ -352,3 +347,11 @@ export default function IntegrationReactSelect({ options, label, placeholder, ..
     </div>
   );
 }
+
+NoOptionsMessageIntegrationReactSelect.propTypes = {
+  options: PropTypes.array,
+  label: PropTypes.string,
+  placeholder: PropTypes.string,
+  onFocus: PropTypes.func,
+  isLoading: PropTypes.bool
+};

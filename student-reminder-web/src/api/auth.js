@@ -26,4 +26,14 @@ export default class AuthApi {
     return fetchRequest(request);
   }
 
+  static getTeachers(token) {
+    const request = new Request(`${apiUrl}/teachers`, {
+      method: "GET",
+      headers: {
+        "Authorization" : `Bearer ${token}`,
+      }
+    });
+
+    return fetchRequest(request);
+  }
 }

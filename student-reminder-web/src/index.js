@@ -13,6 +13,7 @@ import { errorStore } from './stores/ErrorStore';
 import { studentStore } from './stores/StudentStore';
 import { subjectStore } from './stores/SubjectStore';
 import { scheduleStore } from './stores/ScheduleStore';
+import { lessonStore } from './stores/LessonStore';
 
 const browserHistory = createBrowserHistory();
 const routingStore = new RouterStore();
@@ -28,7 +29,8 @@ const stores = {
   errors: errorStore,
   students: studentStore,
   subjects: subjectStore,
-  schedules: scheduleStore
+  schedules: scheduleStore,
+  lessons: lessonStore
 };
 
 ReactDOM.render(

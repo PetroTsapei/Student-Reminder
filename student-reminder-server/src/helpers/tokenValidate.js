@@ -6,4 +6,4 @@ module.exports = function tokenValidate(req, res, next) {
       res.status(403).json({ error: "Don't have access to this data" });
     } else next();
   })
-}
+};

@@ -23,9 +23,15 @@ const useStyles = makeStyles(theme => ({
     bottom: theme.spacing(9),
     right: theme.spacing(3),
   },
+  listItem: {
+    '&:hover': {
+      backgroundColor: "white"
+    }
+  }
 }));
 
 function SubjectList({ item, update, deleteItem }) {
+  const classes = useStyles();
   const [isEditable, setIsEditable] = useState(false);
   const inputEl = useRef(null);
 
@@ -41,7 +47,7 @@ function SubjectList({ item, update, deleteItem }) {
   }
 
   return (
-    <ListItem>
+    <ListItem className={classes.listItem}>
       {
         isEditable ?
           <TextField
@@ -98,7 +104,7 @@ function Subjects({ subjects, routing }) {
 
   return (
     <Grid container spacing={3}>
-      <Grid item xs={12} md={8}>
+      <Grid item xs={12}>
         <List dense>
           { _renderItems() }
         </List>

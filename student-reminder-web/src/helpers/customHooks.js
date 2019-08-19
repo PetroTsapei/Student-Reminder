@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-export const useForm = (callback, validate) => {
+export const useForm = (callback, validate, storedErrors) => {
 
   const [values, setValues] = useState({});
   const [errors, setErrors] = useState({});
@@ -24,6 +24,9 @@ export const useForm = (callback, validate) => {
       setIsSubmitting(false);
       delete errors[name];
     }
+
+    if (storedErrors && storedErrors.list[name]) storedErrors.removeFromList(name);
+
     setValues(values => ({ ...values, [name]: text }));
   };
 

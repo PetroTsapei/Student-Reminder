@@ -6,6 +6,7 @@ import { globalAlertsStore } from '../stores/GlobalAlertsStore';
 export class AuthStore {
 
   @persist @observable token = "";
+  @persist @observable typeOfTime = "full";
 
   @action
   async signIn(signInData, needToRemember) {

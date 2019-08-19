@@ -16,7 +16,7 @@ export default function LabelBottomNavigation({ history }) {
 
   function handleChange(event, newValue) {
     setValue(newValue);
-    history.push(newValue);
+    history.push(newValue.split('?')[0]);
   }
 
   return (

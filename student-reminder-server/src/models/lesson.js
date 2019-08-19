@@ -66,6 +66,6 @@ LessonSchema.pre('validate', function (next) {
       }
     })
     .catch(error => next({error}))
-})
+});
 
 module.exports = mongoose.model('Lesson', LessonSchema);

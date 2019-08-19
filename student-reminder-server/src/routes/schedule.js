@@ -4,6 +4,7 @@ const bodyValidator = require('../helpers/bodyValidator');
 const tokenVerify = require('../helpers/tokenVerify');
 const roleVerify = require('../helpers/roleVerify');
 const setCurrentRole = require('../helpers/setCurrentRole');
+const tokenValidate = require('../helpers/tokenValidate');
 const express = require('express');
 const router = express.Router();
 
@@ -56,6 +57,7 @@ function validateUpdate(req, res, next) {
 router.post('/api/schedules', [tokenVerify, bodyValidator, adminVerify], ScheduleController.post);
 router.put('/api/schedules/:id', [validateUpdate, tokenVerify, bodyValidator, adminVerify], ScheduleController.put);
 router.get('/api/schedules', [tokenVerify, setCurrentRole], ScheduleController.getAll);
+router.get('/api/schedules/:scheduleId', [tokenVerify, setCurrentRole, tokenValidate], ScheduleController.get);
 router.delete('/api/schedules/:id', [tokenVerify, adminVerify], ScheduleController.delete);
 
 module.exports = router;

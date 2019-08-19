@@ -35,9 +35,13 @@ exports.getAll = function(req, res) {
       const page = +req.query.page || 1;
 
       ScheduleModel
-        .find()
+        .find({ typeOfTime: "full" })
         .skip((resPerPage * page) - resPerPage)
         .limit(resPerPage)
+        .sort({
+          dayOfWeek: 1,
+          numberInSchedule: 1,
+        })
         .then(doc => {
           ScheduleModel.countDocuments()
             .then(count => {
@@ -54,6 +58,21 @@ exports.getAll = function(req, res) {
         })
     }
   })
+};
+
+exports.get = function(req, res) {
+  if (!req.params.scheduleId) {
+    return res.status(400).json({ error: 'Missing URL parameter: scheduleId' });
+  }
+
+  ScheduleModel.findById(req.params.scheduleId)
+    .then(data => {
+      if (data) res.json(data);
+      else res.status(404).json({ message: "Schedule not found" });
+    })
+    .catch(err => {
+      res.status(500).json(err);
+    })
 };
 
 exports.put = function(req, res) {

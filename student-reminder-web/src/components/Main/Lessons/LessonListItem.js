@@ -6,7 +6,6 @@ import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import Icon from '@material-ui/core/Icon';
 import DeleteIcon from '@material-ui/icons/Delete';
-import moment from "moment";
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -14,28 +13,14 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ScheduleList({ edit, schedule, deleteItem }) {
+export default function LessonListItem({ edit, lesson, deleteItem }) {
   const classes = useStyles();
 
   return (
     <Grid item xs={12} sm={6} md={4}>
       <Paper className={classes.paper}>
         <Grid item>
-          <Typography gutterBottom variant="subtitle1">
-            { moment.weekdays(schedule.dayOfWeek) }
-          </Typography>
-          <Typography>
-            Number in schedule
-          </Typography>
-          <Typography gutterBottom variant="body2" color="textSecondary">
-            { schedule.numberInSchedule }
-          </Typography>
-          <Typography>
-            Start - end times:
-          </Typography>
-          <Typography gutterBottom variant="body2" color="textSecondary">
-            {`${moment(schedule.startTime).format('HH:mm')} - ${moment(schedule.endTime).format('HH:mm')}` }
-          </Typography>
+
         </Grid>
         <Grid item>
           <IconButton onClick={edit}>

@@ -8,7 +8,7 @@ export default function NotFound() {
   return (
     <Container component="main" maxWidth="md">
       <CssBaseline />
-      test
+      Not found
     </Container>
   )
 }
