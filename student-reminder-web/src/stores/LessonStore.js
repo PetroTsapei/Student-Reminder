@@ -47,6 +47,17 @@ export class LessonStore {
   }
 
   @action
+  async delete(id) {
+    try {
+      await LessonApi.deleteById(authStore.token, id);
+
+      this.lessonList = this.lessonList.filter(e => e._id !== id);
+    } catch (error) {
+      handleError(error);
+    }
+  }
+
+  @action
   setToInitState() {
     this.lessonList = [];
   }

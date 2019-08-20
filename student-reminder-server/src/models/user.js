@@ -33,6 +33,7 @@ const UserSchema = new mongoose.Schema({
     type: ObjectId,
     required: function() { return this.role === 'student' },
   },
+  setting: ObjectId,
   fullName: {
     type: String,
     required: true

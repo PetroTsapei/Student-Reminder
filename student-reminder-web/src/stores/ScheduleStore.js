@@ -26,7 +26,7 @@ export class ScheduleStore {
       const result = await ScheduleApi.createSchedule(authStore.token, data);
 
       this.closeModal = true;
-      if (result.schedule_info.typeOfTime !== authStore.typeOfTime) globalAlertsStore.addAlert({
+      if (result.schedule_info.typeOfTime !== authStore.setting.typeOfTime) globalAlertsStore.addAlert({
         title: "Successfully added",
         message: "Schedule was added, to show it you need switch type of time in header"
       });

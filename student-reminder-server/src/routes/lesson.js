@@ -10,10 +10,11 @@ const router = express.Router();
 
 adminVerify = (req, res, next) => roleVerify(req, res, next, 'admin');
 
-router.post('/api/lessons', [tokenVerify, bodyValidator, adminVerify], LessonController.post);
+router.post('/api/lessons', [tokenVerify, bodyValidator, adminVerify, tokenValidate], LessonController.post);
 router.get('/api/lessons', [tokenVerify, groupVerify, setCurrentRole, tokenValidate], LessonController.getAllByGroup);
 router.get('/api/lessons/all', [tokenVerify, adminVerify, tokenValidate], LessonController.getAll);
 router.get('/api/lessons/:id', [tokenVerify, setCurrentRole, tokenValidate], LessonController.getById);
 router.put('/api/lessons/:id', [tokenVerify, adminVerify, tokenValidate], LessonController.put);
+router.delete('/api/lessons/:id', [tokenVerify, adminVerify, tokenValidate], LessonController.delete);
 
 module.exports = router;

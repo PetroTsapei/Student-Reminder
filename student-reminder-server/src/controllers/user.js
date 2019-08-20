@@ -1,5 +1,6 @@
 const UserModel = require('../models/user');
 const GroupModel = require('../models/group');
+const SettingModel = require('../models/setting');
 const mongoCodes = require('../constants/mongoCodes');
 const tokenVerify = require('../helpers/tokenVerify');
 const roleVerify = require('../helpers/roleVerify');
@@ -44,10 +45,26 @@ exports.sign_up = function (req, res) {
             html: `Link to finished registration: <a href="${process.env.CLIENT_URL}/redirect?url=${process.env.MOBILE_HOST}?phone=${doc.countryCode.replace('+', '')}${doc.phone}&id=${doc._id}">Open app</a>`
           }, () => {
             res.status(201).json({
-              message: "Your account created",
+              message: "Account created",
               user_info: doc
             });
           });
+        } else if (doc.role === 'admin') {
+          let settingModel = new SettingModel({
+            institution: doc._id
+          });
+
+          settingModel.save()
+            .then(async settingDoc => {
+              if (!settingDoc || settingDoc.length === 0) {
+                return res.status(500).send(settingDoc);
+              }
+
+              await UserModel.findByIdAndUpdate(doc._id, {
+                $set: { setting: settingDoc._id }
+              })
+            })
+            .catch(error => res.status(500).json({ error }))
         }
 
         res.status(201).json({
@@ -74,9 +91,10 @@ exports.sign_in = function (req, res) {
   if (!password) return res.status(400).json({error: 'Password is missing'});
 
   UserModel.findOne({ countryCode, phone, password: encrypt(password) })
-    .then(doc => {
+    .then(async doc => {
       if (doc) {
         doc = doc.toObject();
+        const setting = await SettingModel.findById(doc.setting);
         jwt.sign({ user: doc }, doc.role, (err, token) => {
           if (err) res.status(500).json(err);
 
@@ -91,6 +109,7 @@ exports.sign_in = function (req, res) {
               token,
               role: doc.role,
               verified: doc.verified,
+              setting,
               ...( doc.role === 'student' ? { groupName: doc.groupName } : {})
             });
           }
@@ -247,7 +266,7 @@ exports.finishRegistration = async function (req, res) {
 
 exports.getTeachers = async function (req, res) {
   try {
-    let results = [];
+    let results;
 
     results = await UserModel.find({ role: "teacher" });
 

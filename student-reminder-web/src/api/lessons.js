@@ -49,4 +49,15 @@ export default class LessonApi {
 
     return fetchRequest(request);
   }
+
+  static deleteById(token, id) {
+    const request = new Request(`${apiUrl}/lessons/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+      }
+    });
+
+    return fetchRequest(request);
+  }
 }

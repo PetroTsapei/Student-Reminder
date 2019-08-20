@@ -36,4 +36,17 @@ export default class AuthApi {
 
     return fetchRequest(request);
   }
+
+  static updateSetting(token, data) {
+    const request = new Request(`${apiUrl}/settings`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization" : `Bearer ${token}`,
+      },
+      body: JSON.stringify(data)
+    });
+
+    return fetchRequest(request);
+  }
 }

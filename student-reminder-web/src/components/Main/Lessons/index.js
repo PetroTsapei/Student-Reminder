@@ -41,6 +41,7 @@ function Lessons({ lessons }) {
           }}
           key={elem._id}
           lesson={elem}
+          deleteItem={() => lessons.delete(elem._id)}
         />
       ))
     } else return <NotFound />

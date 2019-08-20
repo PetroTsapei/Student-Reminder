@@ -4,7 +4,6 @@ const ScheduleModel = require('../models/schedule');
 const SubjectModel = require('../models/subject');
 const UserModel = require('../models/user');
 const asyncForEach = require('../helpers/asyncForEach');
-const jwt = require('jsonwebtoken');
 const moment = require('moment');
 const sendPushWithExpo = require('../helpers/sendPushWithExpo');
 
@@ -14,36 +13,36 @@ Date.prototype.getWeekOfMonth = function() {
   return Math.floor(offsetDate / 7);
 };
 
-exports.post = function(req, res) {
-  jwt.verify(req.token, req.role, err => {
-    if (err) {
-      res.sendStatus(403);
-    } else {
-      
-      let model = new LessonModel(req.body);
+exports.post = async function(req, res) {
+  try {
+    let model = new LessonModel(req.body);
+    const doc = await model.save();
 
-      model.save()
-        .then(doc => {
-          if (!doc || doc.length === 0) {
-            return res.status(500).send(doc);
-          }
-
-          ScheduleModel.findById(doc.schedule)
-            .then(schedule => {
-              console.log(schedule);
-            });
-          // sendPushWithExpo(['ExponentPushToken[Mvio75Fh88WDjXE8m3hQ4J]'], { body: 'Test', sound: 'default' });
-
-          res.status(201).json({
-            message: "Lesson created",
-            lesson_info: doc
-          });
-        })
-        .catch(err => {
-          res.status(500).json(err);
-        })
+    if (!doc || doc.length === 0) {
+      return res.status(500).send(doc);
     }
-  })
+
+    const schedule = await ScheduleModel.findById(doc.schedule);
+    const subject = await SubjectModel.findById(doc.subject);
+    const teacher = await UserModel.findById(doc.teacher);
+    const group = await GroupModel.findById(doc.group);
+
+    res.status(201).json({
+      message: "Lesson created",
+      lesson_info: {
+        ...doc._doc,
+        schedule,
+        group: group.groupName,
+        subject: subject.name,
+        teacher: teacher.fullName
+      }
+    });
+
+    // sendPushWithExpo(['ExponentPushToken[Mvio75Fh88WDjXE8m3hQ4J]'], { body: 'Test', sound: 'default' });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
 };
 
 exports.getAllByGroup = async function(req, res) {
@@ -114,7 +113,7 @@ exports.put = async function (req, res) {
       return res.status(400).json({ error: 'Missing URL parameter: id' });
     }
 
-    const result = await LessonModel.findByIdAndUpdate(req.params.id, req.body);
+    const result = await LessonModel.findByIdAndUpdate(req.params.id, req.body, { new: true });
 
     if (result) {
       const subject = await SubjectModel.findById(result.subject);
@@ -174,6 +173,20 @@ exports.getById = async function (req, res) {
 
     } else res.status(404).json({ message: "Lesson not found" });
 
+  } catch (error) {
+    res.status(500).json({error});
+  }
+};
+
+exports.delete = async function (req, res) {
+  try {
+    if (!req.params.id) {
+      return res.status(400).json({ error: 'Missing URL parameter: id' });
+    }
+
+    const result = await LessonModel.findByIdAndRemove(req.params.id);
+
+    res.json(result);
   } catch (error) {
     res.status(500).json({error});
   }

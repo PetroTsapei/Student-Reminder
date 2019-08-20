@@ -1,12 +1,13 @@
-import { observable, action } from 'mobx';
-import { persist, create } from 'mobx-persist';
+import {action, observable} from 'mobx';
+import {create, persist} from 'mobx-persist';
 import AuthApi from '../api/auth';
-import { globalAlertsStore } from '../stores/GlobalAlertsStore';
+import {globalAlertsStore} from '../stores/GlobalAlertsStore';
+import handleError from '../helpers/handleError';
 
 export class AuthStore {
 
   @persist @observable token = "";
-  @persist @observable typeOfTime = "full";
+  @persist('object') @observable setting = {};
 
   @action
   async signIn(signInData, needToRemember) {
@@ -27,6 +28,7 @@ export class AuthStore {
       if (data.verified) {
         if (data.role === "admin") {
           this.token = data.token;
+          this.setting = data.setting;
           !needToRemember && localStorage.removeItem('auth');
         } else {
           globalAlertsStore.addAlert({
@@ -47,8 +49,19 @@ export class AuthStore {
   }
 
   @action
+  async updateSetting(data) {
+    try {
+      this.setting = await AuthApi.updateSetting(authStore.token, data);
+
+    } catch (error) {
+      handleError(error);
+    }
+  }
+
+  @action
   signOut() {
     this.token = "";
+    this.setting = {};
   }
 }
 

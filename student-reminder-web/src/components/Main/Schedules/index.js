@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function Schedules({ schedules, routing }) {
+function Schedules({ schedules, routing, auth }) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [scheduleId, setScheduleId] = useState('');
@@ -27,7 +27,7 @@ function Schedules({ schedules, routing }) {
     schedules.getAll(page);
 
     return () => schedules.setToInitState();
-  }, [schedules]);
+  }, [auth.setting]);
 
   function editHandler(id) {
     setScheduleId(id);
@@ -68,4 +68,4 @@ function Schedules({ schedules, routing }) {
   )
 }
 
-export default inject('schedules', 'routing')(observer(Schedules))
+export default inject('schedules', 'routing', 'auth')(observer(Schedules))

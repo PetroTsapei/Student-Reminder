@@ -1,11 +1,11 @@
 const express = require('express');
 const app = express();
-const customerRoute = require('./routes/customer');
 const userRoute = require('./routes/user');
 const groupRoute = require('./routes/group');
 const subjectRoute = require('./routes/subject');
 const scheduleRoute = require('./routes/schedule');
 const lessonRoute = require('./routes/lesson');
+const settingRoute = require('./routes/setting');
 const bodyParser = require('body-parser');
 require('dotenv').config();
 
@@ -18,12 +18,12 @@ app.use(function(req, res, next) {
 });
 
 app.use(bodyParser.json());
-app.use(customerRoute);
 app.use(groupRoute);
 app.use(userRoute);
 app.use(subjectRoute);
 app.use(scheduleRoute);
 app.use(lessonRoute);
+app.use(settingRoute);
 app.use((req, res, next) => {
   console.log(`${new Date().toString()} => ${req.originalUrl}`, req.body);
   next()
