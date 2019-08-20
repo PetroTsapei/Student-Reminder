@@ -1,19 +1,17 @@
-import { observable, action } from 'mobx';
+import {action, observable} from 'mobx';
 import LessonApi from '../api/lessons';
-import { authStore } from '../stores/AuthStore';
+import {authStore} from '../stores/AuthStore';
 import handleError from '../helpers/handleError';
 
 export class LessonStore {
   @observable lessonList = [];
+  @observable closeModal = false;
 
   @action
   async getAll() {
     try {
-      const result = await LessonApi.getLessons(authStore.token);
+      this.lessonList = await LessonApi.getLessons(authStore.token);
 
-      this.lessonList = result;
-
-      console.log(result);
     } catch (error) {
       handleError(error);
     }
@@ -24,9 +22,27 @@ export class LessonStore {
     try {
       const result = await LessonApi.createLesson(authStore.token, data);
 
-      console.log(result);
+      this.closeModal = true;
+
+      this.lessonList.push(result.lesson_info);
     } catch (error) {
       handleError(error);
+    } finally {
+      this.closeModal = false;
+    }
+  }
+
+  @action
+  async update(id, data) {
+    try {
+      const result = await LessonApi.updateById(authStore.token, id, data);
+      this.closeModal = true;
+      this.lessonList = this.lessonList.map(el => el._id === id ? result : el);
+
+    } catch (error) {
+      handleError(error);
+    } finally {
+      this.closeModal = false;
     }
   }
 

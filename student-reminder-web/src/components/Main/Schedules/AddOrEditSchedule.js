@@ -62,7 +62,7 @@ function AddOrEditSchedule({ open, setOpen, scheduleId, setScheduleId, errors, s
       dayOfWeek: new Date().getDay()
     });
 
-    if (scheduleId) ScheduleApi.getById(
+    if (scheduleId && open) ScheduleApi.getById(
       auth.token,
       scheduleId
     ).then(doc => {

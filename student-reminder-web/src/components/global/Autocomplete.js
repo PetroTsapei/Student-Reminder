@@ -303,7 +303,7 @@ const components = {
   ValueContainer,
 };
 
-export default function NoOptionsMessageIntegrationReactSelect({ label, required, error, ...rest }) {
+export default function NoOptionsMessageIntegrationReactSelect({ label, required, error, helperText, ...rest }) {
   const classes = useStyles();
   const theme = useTheme();
   const [single, setSingle] = React.useState(null);
@@ -336,7 +336,8 @@ export default function NoOptionsMessageIntegrationReactSelect({ label, required
               shrink: true,
             },
             required,
-            error
+            error,
+            helperText
           }}
           components={components}
           value={single}

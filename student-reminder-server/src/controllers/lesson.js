@@ -5,6 +5,7 @@ const SubjectModel = require('../models/subject');
 const UserModel = require('../models/user');
 const asyncForEach = require('../helpers/asyncForEach');
 const jwt = require('jsonwebtoken');
+const moment = require('moment');
 const sendPushWithExpo = require('../helpers/sendPushWithExpo');
 
 Date.prototype.getWeekOfMonth = function() {
@@ -102,6 +103,77 @@ exports.getAll = async function (req, res) {
     });
 
     res.json(results);
+  } catch (error) {
+    res.status(500).json({error});
+  }
+};
+
+exports.put = async function (req, res) {
+  try {
+    if (!req.params.id) {
+      return res.status(400).json({ error: 'Missing URL parameter: id' });
+    }
+
+    const result = await LessonModel.findByIdAndUpdate(req.params.id, req.body);
+
+    if (result) {
+      const subject = await SubjectModel.findById(result.subject);
+      const schedule = await ScheduleModel.findById(result.schedule);
+      const group = await GroupModel.findById(result.group);
+      const teacher = await UserModel.findById(result.teacher);
+
+      res.json({
+        ...result._doc,
+        subject: subject.name,
+        schedule,
+        group: group.groupName,
+        teacher: teacher.fullName,
+      });
+    } else res.status(404).json({ message: "Lesson not found" });
+
+  } catch (error) {
+    res.status(500).json({error});
+  }
+};
+
+exports.getById = async function (req, res) {
+  try {
+    if (!req.params.id) {
+      return res.status(400).json({ error: 'Missing URL parameter: id' });
+    }
+
+    let result = await LessonModel.findById(req.params.id);
+
+    if (result) {
+      const subject = await SubjectModel.findById(result.subject);
+      const group = await GroupModel.findById(result.group);
+      const schedule = await ScheduleModel.findById(result.schedule);
+      const teacher = await UserModel.findById(result.teacher);
+
+      res.json({
+        subject: {
+          value: result.subject,
+          label: subject.name
+        },
+        group: {
+          value: result.group,
+          label: group.groupName
+        },
+        schedule: {
+          value: result.schedule,
+          label: `${moment.weekdays(schedule.dayOfWeek)} (${moment(schedule.startTime).format('HH:mm')} - ${moment(schedule.endTime).format('HH:mm')}) - ${schedule.numberInSchedule}`
+        },
+        teacher: {
+          value: result.teacher,
+          label: teacher.fullName
+        },
+        weekOfMonth: {
+          value: result.weekOfMonth
+        }
+      })
+
+    } else res.status(404).json({ message: "Lesson not found" });
+
   } catch (error) {
     res.status(500).json({error});
   }

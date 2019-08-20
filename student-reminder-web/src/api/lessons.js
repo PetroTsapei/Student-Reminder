@@ -25,4 +25,28 @@ export default class LessonApi {
 
     return fetchRequest(request);
   }
+
+  static getById(token, id) {
+    const request = new Request(`${apiUrl}/lessons/${id}`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+      }
+    });
+
+    return fetchRequest(request);
+  }
+
+  static updateById(token, id, data) {
+    const request = new Request(`${apiUrl}/lessons/${id}`, {
+      method: "PUT",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data)
+    });
+
+    return fetchRequest(request);
+  }
 }

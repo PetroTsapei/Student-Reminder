@@ -25,7 +25,7 @@ export default function ScheduleList({ edit, schedule, deleteItem }) {
             { moment.weekdays(schedule.dayOfWeek) }
           </Typography>
           <Typography>
-            Number in schedule
+            Number in schedule:
           </Typography>
           <Typography gutterBottom variant="body2" color="textSecondary">
             { schedule.numberInSchedule }
