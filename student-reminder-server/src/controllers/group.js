@@ -54,17 +54,18 @@ exports.get = function(req, res) {
     .then(async data => {
       if (data) {
 
-        const { fullName: groupCurator } = data.groupCurator ? await UserModel.findById(data.groupCurator) : { fullName: null };
-        const { fullName: groupLeader } = data.groupLeader ? await UserModel.findById(data.groupLeader) : { fullName: null };
+        const groupCurator = await UserModel.findById(data.groupCurator);
+        const groupLeader = await UserModel.findById(data.groupLeader);
 
         res.json({
           ...data._doc,
-          groupCurator,
-          groupLeader
+          groupCurator: groupCurator && { value: groupCurator._id, label: groupCurator.fullName },
+          groupLeader: groupLeader && { value: groupLeader._id, label: groupLeader.fullName }
         })
       } else res.status(404).json({ message: "Group not found" });
     })
     .catch(err => {
+      console.log(err);
       res.status(500).json(err);
     })
 };

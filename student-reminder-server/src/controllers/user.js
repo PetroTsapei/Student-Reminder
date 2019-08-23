@@ -8,6 +8,7 @@ const jwt = require('jsonwebtoken');
 const encrypt = require('../helpers/encrypt');
 const emailValidator = require('email-validator');
 const sendEmail = require('../helpers/sendEmail');
+const asyncForEach = require('../helpers/asyncForEach');
 require('dotenv').config();
 
 exports.sign_up = function (req, res) {
@@ -271,6 +272,33 @@ exports.getTeachers = async function (req, res) {
     results = await UserModel.find({ role: "teacher" });
 
     res.json(results);
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+};
+
+exports.getCurators = async function (req, res) {
+  try {
+    let results = [];
+    let teachers = await UserModel.find({ role: "teacher" });
+
+    await asyncForEach(teachers, async item => {
+      let curator = await GroupModel.findOne({ groupCurator: item._id });
+
+      if (req.query.type === 'free' && !curator) results.push(item);
+      else if (curator) results.push(item);
+    });
+
+    let currentGroup = await GroupModel.findById(req.query.group);
+
+    if (currentGroup && currentGroup.groupCurator && req.query.type === 'free') {
+      let currentCurator = UserModel.findById(currentGroup.groupCurator);
+
+      if (currentCurator) results.push(currentCurator);
+    }
+
+    res.json(results);
+
   } catch (error) {
     res.status(500).json({ error });
   }

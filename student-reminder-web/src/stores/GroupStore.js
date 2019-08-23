@@ -5,6 +5,7 @@ import handleError from '../helpers/handleError';
 
 export class GroupStore {
   @observable groupList = [];
+  @observable closeModal = false;
 
   @action
   async getAll() {
@@ -26,10 +27,29 @@ export class GroupStore {
         ...data
       });
 
+      this.closeModal = true;
+
       this.groupList.push(result.group_info);
 
     } catch (error) {
       handleError(error);
+    } finally {
+      this.closeModal = false;
+    }
+  }
+
+  @action
+  async update(data) {
+    try {
+      const result = await GroupApi.updateById(authStore.token, data);
+
+      this.closeModal = true;
+
+      console.log(result);
+    } catch (error) {
+      handleError(error);
+    } finally {
+      this.closeModal = false;
     }
   }
 

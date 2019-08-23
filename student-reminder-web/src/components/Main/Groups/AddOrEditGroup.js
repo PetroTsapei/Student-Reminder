@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import validate from '../../../helpers/validate';
 import { useForm } from '../../../helpers/customHooks';
 import { inject, observer } from 'mobx-react';
@@ -10,10 +10,14 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Autocomplete from '../../global/Autocomplete';
 import GroupApi from '../../../api/groups';
+import AuthApi from '../../../api/auth';
+import StudentApi from '../../../api/students';
 import handleError from '../../../helpers/handleError';
 import moment from 'moment';
 
 function AddOrEditGroup({ open, setOpen, groupId, setGroupId, groups, errors, auth }) {
+  const [loading, setLoading] = useState('');
+  const [options, setOptions] = useState({});
 
   const {
     values,
@@ -23,6 +27,8 @@ function AddOrEditGroup({ open, setOpen, groupId, setGroupId, groups, errors, au
   } = useForm(onSubmit, validate);
 
   useEffect(() => {
+    if (groups.closeModal) handleClose();
+
     setValues({
       releaseDate: null,
       dateOfCreation: null,
@@ -31,7 +37,7 @@ function AddOrEditGroup({ open, setOpen, groupId, setGroupId, groups, errors, au
       groupCurator: undefined
     });
 
-    if (groupId) GroupApi.getById({
+    if (groupId && open) GroupApi.getById({
       token: auth.token,
       id: groupId
     }).then(doc => {
@@ -39,15 +45,11 @@ function AddOrEditGroup({ open, setOpen, groupId, setGroupId, groups, errors, au
     })
     .catch(error => handleError(error))
 
-  }, [setValues, groupId, auth.token]);
+  }, [open, groups.closeModal]);
 
   function onSubmit(e) {
     if (groupId) return;
     else groups.create(values);
-
-    // if (!Object.keys(errors.list).length) {
-    //   setOpen(false);
-    // }
   }
 
   function handleClose() {
@@ -56,6 +58,46 @@ function AddOrEditGroup({ open, setOpen, groupId, setGroupId, groups, errors, au
     setTimeout(() => {
       setGroupId('');
     }, 200);
+  }
+  
+  async function fetchCurators() {
+    try {
+      setLoading('curators');
+      let result = await AuthApi.getCurators(auth.token, 'free', groupId);
+
+      setOptions({
+        ...options,
+        ['curators']: result.map(elem => ({
+          value: elem._id,
+          label: elem.fullName
+        }))
+      })
+
+    } catch (error) {
+      handleError(error);
+    } finally {
+      setLoading('');
+    }
+  }
+
+  async function fetchGroupStudents() {
+    try {
+      setLoading('students');
+      let data = await StudentApi.getByGroupId({ token: auth.token, groupId });
+
+      setOptions({
+        ...options,
+        ['students']: data.result.map(elem => ({
+          value: elem._id,
+          label: elem.fullName
+        }))
+      })
+
+    } catch (error) {
+      handleError(error);
+    } finally {
+      setLoading('');
+    }
   }
 
   return (
@@ -87,25 +129,22 @@ function AddOrEditGroup({ open, setOpen, groupId, setGroupId, groups, errors, au
           groupId && 
             <>
               <Autocomplete
-                options={[]}
+                options={options.curators}
                 label="Group Curator"
                 placeholder="Select a teacher"
-                isLoading={true}
-                value={values.groupCurator && {
-                  label: values.groupCurator,
-                  value: values.groupCurator
-                }}
-                onChange={e => handleChange(e.value, 'groupCurator')}
+                onFocus={fetchCurators}
+                isLoading={loading === 'curators'}
+                value={values.groupCurator}
+                onChange={val => handleChange(val, 'groupCurator')}
               />
               <Autocomplete 
-                options={[]}
+                options={options.students}
                 label="Group Leader"
                 placeholder="Select a student"
-                value={values.groupLeader && {
-                  label: values.groupLeader,
-                  value: values.groupLeader
-                }}
-                onChange={e => handleChange(e.value, 'groupLeader')}
+                onFocus={fetchGroupStudents}
+                isLoading={loading === 'students'}
+                value={values.groupLeader}
+                onChange={val => handleChange(val, 'groupLeader')}
               />
             </>
         }

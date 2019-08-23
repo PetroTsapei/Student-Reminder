@@ -35,5 +35,6 @@ router.get('/api/students/:groupId', [tokenVerify, setCurrentRole, tokenValidate
 router.get('/api/deep-link-validate/:userId', UserController.deepLinkValidate);
 router.put('/api/finish-registration/:userId', UserController.finishRegistration);
 router.get('/api/teachers', [tokenVerify, setCurrentRole, tokenValidate], UserController.getTeachers);
+router.get('/api/curators', [tokenVerify, setCurrentRole, tokenValidate], UserController.getCurators);
 
 module.exports = router;

@@ -37,6 +37,17 @@ export default class AuthApi {
     return fetchRequest(request);
   }
 
+  static getCurators(token, type, group) {
+    const request = new Request(`${apiUrl}/curators?type=${type}&group=${group}`, {
+      method: "GET",
+      headers: {
+        "Authorization" : `Bearer ${token}`,
+      }
+    });
+
+    return fetchRequest(request);
+  }
+
   static updateSetting(token, data) {
     const request = new Request(`${apiUrl}/settings`, {
       method: "PUT",
