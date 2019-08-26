@@ -81,4 +81,4 @@ module.exports = function(pushTokens, messageData) {
       }
     }
   })();
-}
+};

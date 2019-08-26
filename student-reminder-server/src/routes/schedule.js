@@ -55,8 +55,8 @@ function validateUpdate(req, res, next) {
   } else next();
 }
 
-router.post('/api/schedules', [tokenVerify, bodyValidator, adminVerify, tokenValidate], ScheduleController.post);
-router.put('/api/schedules/:id', [validateUpdate, tokenVerify, bodyValidator, adminVerify, tokenValidate], ScheduleController.put);
+router.post('/api/schedules', [tokenVerify, bodyValidator, adminVerify, tokenValidate, setSetting], ScheduleController.post);
+router.put('/api/schedules/:id', [validateUpdate, tokenVerify, bodyValidator, adminVerify, tokenValidate, setSetting], ScheduleController.put);
 router.get('/api/schedules', [tokenVerify, setCurrentRole, tokenValidate, setSetting], ScheduleController.getAll);
 router.get('/api/schedules/:scheduleId', [tokenVerify, setCurrentRole, tokenValidate], ScheduleController.get);
 router.delete('/api/schedules/:id', [tokenVerify, adminVerify, tokenValidate], ScheduleController.delete);

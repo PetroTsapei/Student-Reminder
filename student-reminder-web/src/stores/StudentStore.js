@@ -27,7 +27,9 @@ export class StudentStore {
 
   @action
   async addStudent(data) {
-    if (data.groupLeader && this.studentList.length && this.studentList.findIndex(el => el.groupLeader === true) >= 0) this.studentList[this.studentList.findIndex(el => el.groupLeader === true)].groupLeader = false;
+    let currentGroupLeader = this.studentList.findIndex(el => el.groupLeader === true);
+
+    if (data.groupLeader && this.studentList.length && currentGroupLeader >= 0) this.studentList[currentGroupLeader].groupLeader = false;
 
     this.studentList = [
       ...this.studentList,
@@ -36,6 +38,38 @@ export class StudentStore {
         phone: `${data.countryCode}${data.phone}`
       }
     ];
+  }
+
+  @action
+  async delete(id) {
+    try {
+      await StudentApi.delete(authStore.token, id);
+
+      this.studentList = this.studentList.filter(e => e._id !== id);
+    } catch (error) {
+      handleError(error);
+    }
+  }
+
+  @action
+  async update(id, data) {
+    let result = await StudentApi.update(authStore.token, id, data);
+    let currentGroupLeader = this.studentList.findIndex(e => e.groupLeader === true);
+    let studentList = Array.from(this.studentList);
+
+    for (let i in studentList) {
+      if (result.groupLeader && currentGroupLeader == i) studentList[i].groupLeader = false;
+
+      if (id === studentList[i]._id) {
+        studentList[i] = {
+          ...result,
+          phone: `${result.countryCode}${result.phone}`
+        };
+        break;
+      }
+    }
+
+    this.studentList = studentList;
   }
 
   setToInitState() {

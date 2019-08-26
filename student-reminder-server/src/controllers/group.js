@@ -1,5 +1,6 @@
 const GroupModel = require('../models/group');
 const UserModel = require('../models/user');
+const LessonModel = require('../models/lesson');
 const mongoCodes = require('../constants/mongoCodes');
 const asyncForEach = require('../helpers/asyncForEach');
 
@@ -65,43 +66,60 @@ exports.get = function(req, res) {
       } else res.status(404).json({ message: "Group not found" });
     })
     .catch(err => {
-      console.log(err);
       res.status(500).json(err);
     })
 };
 
 exports.put = function(req, res) {
-  if (!req.params.groupName) {
-    return res.status(400).json({ error: 'Missing URL parameter: groupName' });
+  if (!req.params.id) {
+    return res.status(400).json({ error: 'Missing URL parameter: id' });
   }
 
-  GroupModel.findOneAndUpdate({
-    groupName: req.params.groupName
-  }, req.body, {
+  GroupModel.findByIdAndUpdate(req.params.id, req.body, {
     new: true
   })
-    .then(doc => {
-      if (doc) res.json(doc);
+    .then(async doc => {
+      if (doc) {
+        let data = {};
+
+        if (doc.groupLeader) {
+          let { fullName } = await UserModel.findById(doc.groupLeader);
+          data.groupLeader = fullName;
+        }
+
+        if (doc.groupCurator) {
+          let { fullName } = await UserModel.findById(doc.groupCurator);
+          data.groupCurator = fullName;
+        }
+
+        res.json({
+          ...doc._doc,
+          ...data
+        });
+      }
       else res.status(404).json({ message: "Group not found" });
     })
     .catch(err => {
-      res.status(500).json(err)
+      if (err.code === mongoCodes.notRequired) res.status(400).json({ errors: { groupName: { message: "Group with this name already exist" } } });
+      else res.status(500).json(err);
     })
 };
 
-exports.delete = function(req, res) {
-  if (!req.params.groupName) {
-    return res.status(400).json({ error: 'Missing URL parameter: groupName' });
-  }
+exports.delete = async function(req, res) {
+  try {
+    if (!req.params.id) {
+      return res.status(400).json({ error: 'Missing URL parameter: id' });
+    }
 
-  GroupModel.findOneAndRemove({
-    groupName: req.params.groupName
-  })
-    .then(doc => {
-      if (doc) res.json(doc);
-      else res.status(404).json({ message: "Group not found" });
-    })
-    .catch(err => {
-      res.status(500).json(err)
-    })
+    await UserModel.deleteMany({ group: req.params.id });
+    await LessonModel.deleteMany({ group: req.params.id });
+
+    let doc = await GroupModel.findByIdAndRemove(req.params.id);
+
+    if (doc) res.json(doc);
+    else res.status(404).json({ message: "Group not found" });
+
+  } catch (error) {
+    res.status(500).json({error});
+  }
 };

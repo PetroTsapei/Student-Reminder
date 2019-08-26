@@ -11,12 +11,12 @@ const GroupSchema = new mongoose.Schema({
   dateOfCreation: {
     type: Date,
     required: true,
-    max: function() { return this.releaseDate }
+    // max: function() { return this.releaseDate }
   },
   releaseDate: {
     type: Date,
     required: true,
-    min: function() { return this.dateOfCreation }
+    // min: function() { return this.dateOfCreation }
   },
   groupCurator: ObjectId,
   groupLeader: ObjectId

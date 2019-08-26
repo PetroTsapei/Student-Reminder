@@ -26,6 +26,17 @@ export default class GroupsApi {
     return fetchRequest(request);
   }
 
+  static delete(token, id) {
+    const request = new Request(`${apiUrl}/groups/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    return fetchRequest(request);
+  }
+
   static getById({ token, id }) {
     const request = new Request(`${apiUrl}/groups/${id}`, {
       method: "GET",
@@ -37,8 +48,8 @@ export default class GroupsApi {
     return fetchRequest(request);
   }
 
-  static updateById(token, data) {
-    const request = new Request(`${apiUrl}/groups`, {
+  static updateById(token, groupId, data) {
+    const request = new Request(`${apiUrl}/groups/${groupId}`, {
       method: "PUT",
       headers: {
         "Authorization": `Bearer ${token}`,

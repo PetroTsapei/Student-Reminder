@@ -16,7 +16,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function GroupList({ group, edit }) {
+export default function GroupList({ group, edit, deleteItem }) {
   const classes = useStyles();
 
   return (
@@ -50,7 +50,7 @@ export default function GroupList({ group, edit }) {
             <IconButton onClick={edit}>
               <Icon>edit_icon</Icon>
             </IconButton>
-            <IconButton>
+            <IconButton onClick={deleteItem}>
               <DeleteIcon />
             </IconButton>
           </Grid>

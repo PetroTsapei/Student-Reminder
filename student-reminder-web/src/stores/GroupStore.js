@@ -39,17 +39,28 @@ export class GroupStore {
   }
 
   @action
-  async update(data) {
+  async update(groupId, data) {
     try {
-      const result = await GroupApi.updateById(authStore.token, data);
+      const result = await GroupApi.updateById(authStore.token, groupId, data);
 
       this.closeModal = true;
+      this.groupList = this.groupList.map(el => el._id === groupId ? result : el);
 
-      console.log(result);
     } catch (error) {
       handleError(error);
     } finally {
       this.closeModal = false;
+    }
+  }
+
+  @action
+  async delete(id) {
+    try {
+      await GroupApi.delete(authStore.token, id);
+
+      this.groupList = this.groupList.filter(e => e._id !== id);
+    } catch (error) {
+      handleError(error);
     }
   }
 

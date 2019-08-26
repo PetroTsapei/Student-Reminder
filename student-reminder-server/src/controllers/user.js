@@ -6,7 +6,6 @@ const tokenVerify = require('../helpers/tokenVerify');
 const roleVerify = require('../helpers/roleVerify');
 const jwt = require('jsonwebtoken');
 const encrypt = require('../helpers/encrypt');
-const emailValidator = require('email-validator');
 const sendEmail = require('../helpers/sendEmail');
 const asyncForEach = require('../helpers/asyncForEach');
 require('dotenv').config();
@@ -19,8 +18,6 @@ exports.sign_up = function (req, res) {
     });
     if (!req.role) return;
   }
-
-  if (!emailValidator.validate(req.body.email)) return res.status(400).json({ error: "Invalid email" });
 
   let model = new UserModel(req.body);
   model.save()
@@ -286,14 +283,13 @@ exports.getCurators = async function (req, res) {
       let curator = await GroupModel.findOne({ groupCurator: item._id });
 
       if (req.query.type === 'free' && !curator) results.push(item);
-      else if (curator) results.push(item);
+      else if (req.query.type === 'busy' && curator) results.push(item);
     });
 
     let currentGroup = await GroupModel.findById(req.query.group);
 
     if (currentGroup && currentGroup.groupCurator && req.query.type === 'free') {
-      let currentCurator = UserModel.findById(currentGroup.groupCurator);
-
+      let currentCurator = await UserModel.findById(currentGroup.groupCurator);
       if (currentCurator) results.push(currentCurator);
     }
 
@@ -301,5 +297,39 @@ exports.getCurators = async function (req, res) {
 
   } catch (error) {
     res.status(500).json({ error });
+  }
+};
+
+exports.delete = async function (req, res) {
+  try {
+    let user = await UserModel.findByIdAndRemove(req.params.id);
+
+    await GroupModel.updateOne({ groupLeader: req.params.id }, { $unset: { groupLeader: "" } });
+
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+};
+
+exports.update = async function (req, res) {
+  try {
+    let user = await UserModel.findByIdAndUpdate(req.params.id, req.body, { new: true });
+
+    if (!req.body.groupLeader) {
+      await GroupModel.updateOne({ groupLeader: req.params.id }, { $unset: { groupLeader: "" } });
+    }
+
+    if (req.body.groupLeader) {
+      await GroupModel.findByIdAndUpdate(user.group, { $set: { groupLeader: req.params.id } });
+    }
+
+    res.json({
+      ...user._doc,
+      ...( req.body.groupLeader ? { groupLeader: true } : {} )
+    });
+  } catch (error) {
+    if (error.code === mongoCodes.notRequired) res.status(400).json({ error: "User with this email already created" });
+    else res.status(500).json({ error });
   }
 };

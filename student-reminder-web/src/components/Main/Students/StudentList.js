@@ -6,6 +6,7 @@ import { globalAlertsStore } from '../../../stores/GlobalAlertsStore';
 import AuthApi from '../../../api/auth';
 import Link from '@material-ui/core/Link';
 import MaterialTable from 'material-table';
+import handleError from '../../../helpers/handleError';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -28,7 +29,7 @@ function StudentList({ goBack, students, groupId }) {
     }
   }, [students, groupId]);
 
-  function onRowAdd(newData) {
+  function onRowAddUpdate(newData, oldData) {
     return new Promise(async (resolve, reject) => {
       try {
         let signUpData = {};
@@ -56,9 +57,11 @@ function StudentList({ goBack, students, groupId }) {
           group: groupId
         };
 
-        let response = await AuthApi.signUp(signUpData);
-
-        students.addStudent(response.user_info);
+        if (oldData) await students.update(signUpData._id, signUpData);
+        else {
+          let response = await AuthApi.signUp(signUpData);
+          students.addStudent(response.user_info);
+        }
 
         resolve();
 
@@ -71,6 +74,18 @@ function StudentList({ goBack, students, groupId }) {
           title: "Error",
           message: Object.values(error.fieldsErrors.errors)[0].message
         });
+        reject(error);
+      }
+    })
+  }
+
+  function onRowDelete(oldData) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        students.delete(oldData._id);
+        resolve();
+      } catch (error) {
+        handleError(error);
         reject(error);
       }
     })
@@ -91,9 +106,9 @@ function StudentList({ goBack, students, groupId }) {
           title={students.groupName}
           data={students.studentList}
           editable={{
-            onRowAdd: onRowAdd,
-            onRowUpdate: (newData, oldData) => console.log(newData),
-            onRowDelete: oldData => console.log(oldData)
+            onRowAdd: onRowAddUpdate,
+            onRowUpdate: onRowAddUpdate,
+            onRowDelete: onRowDelete
           }}
         />
       </div>

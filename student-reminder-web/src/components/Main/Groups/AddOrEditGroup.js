@@ -47,8 +47,19 @@ function AddOrEditGroup({ open, setOpen, groupId, setGroupId, groups, errors, au
 
   }, [open, groups.closeModal]);
 
-  function onSubmit(e) {
-    if (groupId) return;
+  function onSubmit() {
+    if (groupId) {
+      let data = {};
+
+      for (let key in values) {
+        let currentElem = values[key];
+
+        if (currentElem && currentElem.value) data[key] = currentElem.value;
+        else data[key] = currentElem;
+      }
+
+      groups.update(groupId, data);
+    }
     else groups.create(values);
   }
 
@@ -133,18 +144,28 @@ function AddOrEditGroup({ open, setOpen, groupId, setGroupId, groups, errors, au
                 label="Group Curator"
                 placeholder="Select a teacher"
                 onFocus={fetchCurators}
+                onBlur={() => setOptions({
+                  ...options,
+                  ['curators']: []
+                })}
                 isLoading={loading === 'curators'}
                 value={values.groupCurator}
                 onChange={val => handleChange(val, 'groupCurator')}
+                isClearable
               />
               <Autocomplete 
                 options={options.students}
                 label="Group Leader"
                 placeholder="Select a student"
                 onFocus={fetchGroupStudents}
+                onBlur={() => setOptions({
+                  ...options,
+                  ['students']: []
+                })}
                 isLoading={loading === 'students'}
                 value={values.groupLeader}
                 onChange={val => handleChange(val, 'groupLeader')}
+                isClearable
               />
             </>
         }
@@ -163,6 +184,8 @@ function AddOrEditGroup({ open, setOpen, groupId, setGroupId, groups, errors, au
             }}
             value={values.dateOfCreation ? moment(values.dateOfCreation).format('YYYY-MM-DD') : ''}
             required
+            error={!!errors.list.dateOfCreation}
+            helperText={errors.list.dateOfCreation && errors.list.dateOfCreation.message}
           />
         </DialogContent>
         <DialogContent>
@@ -180,6 +203,8 @@ function AddOrEditGroup({ open, setOpen, groupId, setGroupId, groups, errors, au
             }}
             value={values.releaseDate ? moment(values.releaseDate).format('YYYY-MM-DD') : ''}
             required
+            error={!!errors.list.releaseDate}
+            helperText={errors.list.releaseDate && errors.list.releaseDate.message}
           />
         </DialogContent>
         <DialogActions>

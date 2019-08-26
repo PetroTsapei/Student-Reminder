@@ -34,9 +34,28 @@ lessonValidate = (req, res, next) => {
                       .then(doc => {
                         if (!doc && self.teacher) res.status(404).json({error: "Teacher not found"});
                         else {
-                          LessonModel.findOne({ schedule: self.schedule, weekOfMonth: self.weekOfMonth, subject: self.subject })
+                          LessonModel.findOne({ schedule: self.schedule, weekOfMonth: self.weekOfMonth, group: self.group }, '-_id -__v')
                             .then(doc => {
-                              if (doc) res.status(400).json({error: "Lesson already exist for this group"});
+                              // TODO fix this validate
+                              if (doc) {
+                                if (
+                                  JSON.stringify({
+                                    subject: self.subject,
+                                    group: self.group,
+                                    schedule: self.schedule,
+                                    teacher: self.teacher,
+                                    weekOfMonth: self.weekOfMonth
+                                  }) === JSON.stringify({
+                                    subject: doc.subject,
+                                    group: doc.group,
+                                    schedule: doc.schedule,
+                                    teacher: doc.teacher,
+                                    weekOfMonth: doc.weekOfMonth
+                                  })
+                                ) return next();
+
+                                res.status(400).json({error: "Lesson already exist for this group"});
+                              }
                               else next();
                             })
                             .catch(error => res.status(500).json(error))
