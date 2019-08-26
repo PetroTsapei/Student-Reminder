@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function StudentList({ goBack, students, groupId }) {
+function StudentList({ goBack, students, groupId, auth }) {
   const classes = useStyles();
 
   useEffect(() => {
@@ -59,7 +59,7 @@ function StudentList({ goBack, students, groupId }) {
 
         if (oldData) await students.update(signUpData._id, signUpData);
         else {
-          let response = await AuthApi.signUp(signUpData);
+          let response = await AuthApi.signUp(signUpData, auth.token);
           students.addStudent(response.user_info);
         }
 
@@ -116,4 +116,4 @@ function StudentList({ goBack, students, groupId }) {
   )
 }
 
-export default inject('students')(observer(StudentList))
+export default inject('students', 'auth')(observer(StudentList))

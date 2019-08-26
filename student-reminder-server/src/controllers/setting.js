@@ -29,3 +29,13 @@ exports.put = async function (req, res) {
     res.status(500).json({ error });
   }
 };
+
+exports.get = async function (req, res) {
+  try {
+    const result = await SettingModel.findById(req.setting);
+
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+};

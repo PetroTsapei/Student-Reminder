@@ -35,6 +35,15 @@ export default class AuthApi {
     })
   }
 
+  static deletePushToken(token) {
+    return fetchRequest(`${apiUrl}/push-token`, {
+      method: "DELETE",
+      headers: {
+        "Authorization" : `Bearer ${token}`
+      }
+    })
+  }
+
   static validateDeepLink(userId) {
     return fetchRequest(`${apiUrl}/deep-link-validate/${userId}`, {
       method: "GET"
@@ -48,6 +57,15 @@ export default class AuthApi {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(data)
+    })
+  }
+
+  static getSetting(token) {
+    return fetchRequest(`${apiUrl}/settings`, {
+      method: "GET",
+      headers: {
+        "Authorization" : `Bearer ${token}`
+      }
     })
   }
 

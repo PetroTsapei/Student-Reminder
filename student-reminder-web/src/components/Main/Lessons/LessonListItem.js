@@ -40,7 +40,7 @@ export default function LessonListItem({ edit, lesson, deleteItem }) {
             Schedule:
           </Typography>
           <Typography gutterBottom variant="body2" color="textSecondary">
-            { `${moment.weekdays(lesson.schedule.dayOfWeek)} (${moment(lesson.schedule.startTime).format('HH:mm')} - ${moment(lesson.schedule.endTime).format('HH:mm')}) - ${lesson.schedule.numberInSchedule}` }
+            { `${moment.weekdays(lesson.schedule.dayOfWeek)} (${moment(lesson.schedule.startTime).format('LT')} - ${moment(lesson.schedule.endTime).format('LT')}) - ${lesson.schedule.numberInSchedule}` }
           </Typography>
           <Typography>
             Teacher:

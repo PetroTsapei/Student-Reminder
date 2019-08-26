@@ -49,10 +49,9 @@ exports.getAllByGroup = async function(req, res) {
   try {
     let results = [];
 
-    let { _id: group, groupName } = await GroupModel.findOne({ groupName: req.query.groupName });
+    let { _id: group, groupName } = await GroupModel.findById(req.query.group);
 
-    // TODO check that the condition is correct
-    if (req.role === 'student' && group !== req.group) return res.status(403).json({ message: "Don't have access for lessons this group" });
+    if (req.role === 'student' && String(group) !== req.group) return res.status(403).json({ message: "Don't have access for lessons this group" });
 
     let lessons = await LessonModel.find({ group });
 

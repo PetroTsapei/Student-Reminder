@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect } from 'react';
 import { withRouter, Switch } from 'react-router';
 import { observer, inject } from 'mobx-react';
 
@@ -22,17 +22,19 @@ class ScrollToTop extends Component {
 
 const ScrollToTopWrapper = withRouter(ScrollToTop);
 
-class MainRouter extends Component {
-  render() {
-    return (
-      <ScrollToTopWrapper>
-        <Switch>
-          { this.props.auth.token && PrivateRoutes() }
-          { PublicRoutes() }
-        </Switch>
-      </ScrollToTopWrapper>
-    )
-  }
-}
+const MainRouter = ({ history, auth }) => {
+  useEffect(() => {
+    if (!auth.token && history.location.pathname !== "/redirect") history.push('/');
+  }, [auth.token]);
+
+  return (
+    <ScrollToTopWrapper>
+      <Switch>
+        { auth.token && PrivateRoutes() }
+        { PublicRoutes() }
+      </Switch>
+    </ScrollToTopWrapper>
+  )
+};
 
 export default inject('auth')(observer(MainRouter));

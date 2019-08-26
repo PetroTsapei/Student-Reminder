@@ -7,6 +7,7 @@ const setCurrentRole = require('../helpers/setCurrentRole');
 const roleVerify = require('../helpers/roleVerify');
 const tokenValidate = require('../helpers/tokenValidate');
 const emailValidator = require('email-validator');
+const jwt = require('jsonwebtoken');
 const express = require('express');
 const router = express.Router();
 
@@ -35,11 +36,19 @@ function validatePhone(req, res, next) {
     .catch(error => res.status(500).json({error}));
 }
 
-router.post('/api/sign_up', [findGroup, bodyValidator, validatePhone, validateEmail], UserController.sign_up);
+function setUserId(req, res, next) {
+  let decodeJWT = jwt.decode(req.token);
+
+  if (decodeJWT) req.id = decodeJWT.user._id;
+  next();
+}
+
+router.post('/api/sign_up', [findGroup, bodyValidator, validatePhone, validateEmail, tokenVerify], UserController.sign_up);
 router.post('/api/sign_in', bodyValidator, UserController.sign_in);
 router.post('/api/resend-code/:id', UserController.resend);
 router.post('/api/verify/:id', UserController.verify);
-router.post('/api/push-token', [tokenVerify], UserController.pushToken);
+router.post('/api/push-token', [tokenVerify, setCurrentRole, tokenValidate, setUserId], UserController.pushToken);
+router.delete('/api/push-token', [tokenVerify, setCurrentRole, tokenValidate, setUserId], UserController.deletePushToken);
 router.get('/api/students/:groupId', [tokenVerify, setCurrentRole, tokenValidate], UserController.students);
 router.get('/api/deep-link-validate/:userId', UserController.deepLinkValidate);
 router.put('/api/finish-registration/:userId', UserController.finishRegistration);

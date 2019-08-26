@@ -2,11 +2,12 @@ import { apiUrl } from '../constants/apiConsts';
 import fetchRequest from '../helpers/request';
 
 export default class AuthApi {
-  static signUp(data) {
+  static signUp(data, token) {
     const request = new Request(`${apiUrl}/sign_up`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Authorization" : `Bearer ${token}`,
       },
       body: JSON.stringify(data)
     });

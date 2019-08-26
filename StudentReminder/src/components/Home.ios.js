@@ -29,10 +29,9 @@ export const Home = ({ history }) => {
   const onSignOut = () => {
     rootStore.authStore.signOut();
     history.push('/');
-  }
+  };
 
-  getCurrentLocation = () => {
-    // TODO fix it
+  const getCurrentLocation = () => {
     navigator.geolocation.getCurrentPosition(
       position => {
         let region = {
@@ -51,13 +50,13 @@ export const Home = ({ history }) => {
         maximumAge: 1000
       }
     );
-  }
+  };
 
   useEffect(() => getCurrentLocation(), ['initialRegion']);
 
-  pages = () => {
+  const pages = () => {
     switch(history.location.pathname) {
-      case '/': return <Lessons />
+      case '/': return <Lessons />;
       case '/:settings': return (
         <>
           <Header>
@@ -73,7 +72,7 @@ export const Home = ({ history }) => {
             </Button>
           </Content>
         </>
-      )
+      );
       case '/:map': {
         if (Object.keys(initialRegion).length) {
           return (
@@ -98,7 +97,7 @@ export const Home = ({ history }) => {
         )
       }
     }
-  }
+  };
 
   return (
     <Container>
@@ -116,10 +115,6 @@ export const Home = ({ history }) => {
                 active={isActive('/')}
               />
               <Text>Lessons</Text>
-            </Button>
-            <Button vertical>
-              <Icon name="camera" />
-              <Text>Camera</Text>
             </Button>
             <Button 
               vertical 
@@ -147,4 +142,4 @@ export const Home = ({ history }) => {
       </Footer>
     </Container>
   )
-}
+};

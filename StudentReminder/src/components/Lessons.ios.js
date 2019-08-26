@@ -15,6 +15,7 @@ import {
   Card,
   CardItem,
 } from 'native-base';
+import AuthApi from '../api/auth';
 import dayOfWeek from '../helpers/numberOfWeek';
 import { RootStoreContext } from '../stores/RootStore';
 import { observer } from 'mobx-react-lite';
@@ -25,11 +26,21 @@ export const Lessons = observer(() => {
   const rootStore = useContext(RootStoreContext);
   const [refreshing, setRefreshing] = useState(false);
 
+  async function fetchLessons() {
+    try {
+      let { typeOfTime } = await AuthApi.getSetting(rootStore.authStore.token);
+
+      rootStore.lessonsStore.getLessons({
+        typeOfTime: typeOfTime,
+        group: rootStore.authStore.group
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   useEffect(() => {
-    rootStore.lessonsStore.getLessons({
-      typeOfTime: "short",
-      groupName: rootStore.authStore.group
-    });
+    fetchLessons();
 
     setRefreshing(false);
   }, [refreshing]);
@@ -52,7 +63,7 @@ export const Lessons = observer(() => {
         if (!lessonsForDayOfWeek.length) {
           weekLessons.push(notification('No lessons for this day'))
         }
-        if (new Date().getDay() == day) initialPage = day - 1; // tabs start numerate from 0
+        if (new Date().getDay() == day) initialPage = +day;
 
         lessonsForDayOfWeek.forEach((lessonItem, key) => {
           const startLesson = moment(lessonItem.schedule.startTime).format('LT');

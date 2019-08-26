@@ -34,7 +34,7 @@ export default function ScheduleList({ edit, schedule, deleteItem }) {
             Start - end times:
           </Typography>
           <Typography gutterBottom variant="body2" color="textSecondary">
-            {`${moment(schedule.startTime).format('HH:mm')} - ${moment(schedule.endTime).format('HH:mm')}` }
+            {`${moment(schedule.startTime).format('LT')} - ${moment(schedule.endTime).format('LT')}` }
           </Typography>
         </Grid>
         <Grid item>

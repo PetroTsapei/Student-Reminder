@@ -10,6 +10,7 @@ const bodyValidator = require('../helpers/bodyValidator');
 const roleVerify = require('../helpers/roleVerify');
 const groupVerify = require('../helpers/getGroupName');
 const setCurrentRole = require('../helpers/setCurrentRole');
+const compareObj = require('../helpers/compareObj');
 const express = require('express');
 const router = express.Router();
 
@@ -34,24 +35,17 @@ lessonValidate = (req, res, next) => {
                       .then(doc => {
                         if (!doc && self.teacher) res.status(404).json({error: "Teacher not found"});
                         else {
-                          LessonModel.findOne({ schedule: self.schedule, weekOfMonth: self.weekOfMonth, group: self.group }, '-_id -__v')
+                          LessonModel.findOne({ schedule: self.schedule, weekOfMonth: self.weekOfMonth, group: self.group }, '-__v')
                             .then(doc => {
-                              // TODO fix this validate
                               if (doc) {
+                                const {
+                                  _id,
+                                  ...rest
+                                } = doc._doc;
+
                                 if (
-                                  JSON.stringify({
-                                    subject: self.subject,
-                                    group: self.group,
-                                    schedule: self.schedule,
-                                    teacher: self.teacher,
-                                    weekOfMonth: self.weekOfMonth
-                                  }) === JSON.stringify({
-                                    subject: doc.subject,
-                                    group: doc.group,
-                                    schedule: doc.schedule,
-                                    teacher: doc.teacher,
-                                    weekOfMonth: doc.weekOfMonth
-                                  })
+                                  req.params.id == _id && ((compareObj(self, rest)) ||
+                                  (self.teacher !== doc.teacher) || (self.subject !== doc.subject))
                                 ) return next();
 
                                 res.status(400).json({error: "Lesson already exist for this group"});

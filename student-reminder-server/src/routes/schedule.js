@@ -14,45 +14,16 @@ adminVerify = (req, res, next) => roleVerify(req, res, next, 'admin');
 function validateUpdate(req, res, next) {
   const {
     typeOfTime,
-    numberInSchedule
+    numberInSchedule,
+    dayOfWeek
   } = req.body;
 
-  if (numberInSchedule && !typeOfTime) {
-    ScheduleModel.findById(req.params.id)
-      .then(doc => {
-        if (doc.numberInSchedule == numberInSchedule) next();
-        else {
-          ScheduleModel.find({ _id: { $ne: doc._id }, numberInSchedule, typeOfTime: doc.typeOfTime })
-            .then(doc => {
-              if (doc.length) res.status(400).json({ error: "Schedule already exist" });
-              else next();
-            })
-            .catch(error => res.status(500).json(error));
-        }
-      })
-      .catch(error => res.status(500).json(error))
-  } else if (typeOfTime && !numberInSchedule) {
-    ScheduleModel.findById(req.params.id)
-      .then(doc => {
-        if (doc.typeOfTime == typeOfTime) next();
-        else {
-          ScheduleModel.find({ _id: { $ne: doc._id }, typeOfTime, numberInSchedule: doc.numberInSchedule })
-            .then(doc => {
-              if (doc.length) res.status(400).json({ error: "Schedule already exist" });
-              else next();
-            })
-        }
-      })
-      .catch(error => res.status(500).json(error))
-  } else if (typeOfTime && numberInSchedule) {
-    ScheduleModel.find({ _id: { $ne: req.params.id }, typeOfTime, numberInSchedule })
-      .then(doc => {
-        if (doc.length) res.status(400).json({ error: "Schedule already exist" });
-        else next();
-      })
-      .catch(error => res.status(500).json(error));
-
-  } else next();
+  ScheduleModel.find({ _id: { $ne: req.params.id }, typeOfTime, numberInSchedule, dayOfWeek })
+    .then(doc => {
+      if (doc.length) res.status(400).json({ error: "Schedule already exist" });
+      else next();
+    })
+    .catch(error => res.status(500).json(error));
 }
 
 router.post('/api/schedules', [tokenVerify, bodyValidator, adminVerify, tokenValidate, setSetting], ScheduleController.post);

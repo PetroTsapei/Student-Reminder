@@ -2,7 +2,6 @@ const UserModel = require('../models/user');
 const GroupModel = require('../models/group');
 const SettingModel = require('../models/setting');
 const mongoCodes = require('../constants/mongoCodes');
-const tokenVerify = require('../helpers/tokenVerify');
 const roleVerify = require('../helpers/roleVerify');
 const jwt = require('jsonwebtoken');
 const encrypt = require('../helpers/encrypt');
@@ -13,62 +12,65 @@ require('dotenv').config();
 exports.sign_up = function (req, res) {
   if (req.body.password) req.body.password = encrypt(req.body.password);
   if (req.body.role === 'admin') {
-    tokenVerify(req, res, () => {
-      roleVerify(req, res, () => {}, 'admin');
-    });
+    roleVerify(req, res, () => {}, 'admin');
     if (!req.role) return;
   }
 
+  const decodeJWT = jwt.decode(req.token);
+
+  if (decodeJWT) req.body.setting = decodeJWT.user.setting;
+
   let model = new UserModel(req.body);
   model.save()
-    .then(doc => {
+    .then(async doc => {
       if (!doc || doc.length === 0) {
         return res.status(500).send(doc);
       }
 
-      model.sendAuthyToken(async error => {
-        // if (error) res.status(400).json({ error: error.message });
+      // model.sendAuthyToken(async error => {
+      //   // if (error) res.status(400).json({ error: error.message });
+      //
+      // });
 
-        if (doc.role === 'student') {
-          if (req.body.groupLeader) {
-            await GroupModel.findByIdAndUpdate(doc.group, {groupLeader: doc._id});
-            doc._doc.groupLeader = true;
-          }
-
-          let { groupName } = await GroupModel.findById(doc.group);
-
-          return sendEmail(req, res, {
-            to: doc.email,
-            subject: `Welcome to ${groupName}, you was added in studentReminder app`,
-            html: `Link to finished registration: <a href="${process.env.CLIENT_URL}/redirect?url=${process.env.MOBILE_HOST}?phone=${doc.countryCode.replace('+', '')}${doc.phone}&id=${doc._id}">Open app</a>`
-          }, () => {
-            res.status(201).json({
-              message: "Account created",
-              user_info: doc
-            });
-          });
-        } else if (doc.role === 'admin') {
-          let settingModel = new SettingModel({
-            institution: doc._id
-          });
-
-          settingModel.save()
-            .then(async settingDoc => {
-              if (!settingDoc || settingDoc.length === 0) {
-                return res.status(500).send(settingDoc);
-              }
-
-              await UserModel.findByIdAndUpdate(doc._id, {
-                $set: { setting: settingDoc._id }
-              })
-            })
-            .catch(error => res.status(500).json({ error }))
+      if (doc.role === 'student') {
+        if (req.body.groupLeader) {
+          await GroupModel.findByIdAndUpdate(doc.group, {groupLeader: doc._id});
+          doc._doc.groupLeader = true;
         }
 
-        res.status(201).json({
-          message: "Your account created, please write authentication code",
-          user_info: doc
+        let { groupName } = await GroupModel.findById(doc.group);
+
+        return sendEmail(req, res, {
+          to: doc.email,
+          subject: `Welcome to ${groupName}, you was added in studentReminder app`,
+          html: `Link to finished registration: <a href="${process.env.CLIENT_URL}/redirect?url=${process.env.MOBILE_HOST}?phone=${doc.countryCode.replace('+', '')}${doc.phone}&id=${doc._id}">Open app</a>`
+        }, () => {
+          res.status(201).json({
+            message: "Account created",
+            user_info: doc
+          });
         });
+      } else if (doc.role === 'admin') {
+        let settingModel = new SettingModel({
+          institution: doc._id
+        });
+
+        settingModel.save()
+          .then(async settingDoc => {
+            if (!settingDoc || settingDoc.length === 0) {
+              return res.status(500).send(settingDoc);
+            }
+
+            await UserModel.findByIdAndUpdate(doc._id, {
+              $set: { setting: settingDoc._id }
+            })
+          })
+          .catch(error => res.status(500).json({ error }))
+      }
+
+      res.status(201).json({
+        message: "Your account created, please write authentication code",
+        user_info: doc
       });
     })
     .catch(err => {
@@ -108,7 +110,9 @@ exports.sign_in = function (req, res) {
               role: doc.role,
               verified: doc.verified,
               setting,
-              ...( doc.role === 'student' ? { groupName: doc.groupName } : {})
+              fullName: doc.fullName,
+              phone: `${doc.countryCode}${doc.phone}`,
+              ...( doc.role === 'student' ? { group: doc.group, } : {})
             });
           }
         });
@@ -180,25 +184,30 @@ exports.verify = function(req, res) {
 };
 
 exports.pushToken = function(req, res) {
-  decodeJWT = jwt.decode(req.token);
-  if (decodeJWT) req.role = decodeJWT.user.role;
-
-  jwt.verify(req.token, req.role, async err => {
-    if (err) {
-      res.sendStatus(403);
-    } else {
-      UserModel.findByIdAndUpdate(decodeJWT.user._id, {
-        $set: { pushToken: req.body.pushToken }
-      })
-        .then(doc => {
-          if (doc) res.json(doc);
-          else res.status(404).json({ error: "User not found" });
-        })
-        .catch(err => {
-          res.status(500).json(err)
-        })
-    }
+  UserModel.findByIdAndUpdate(req.id, {
+    $set: { pushToken: req.body.pushToken }
   })
+    .then(doc => {
+      if (doc) res.json(doc);
+      else res.status(404).json({ error: "User not found" });
+    })
+    .catch(err => {
+      res.status(500).json(err)
+    })
+};
+
+exports.deletePushToken = async function(req, res) {
+  try {
+    const doc = await UserModel.findByIdAndUpdate(req.id, {
+      $unset: { pushToken: "" }
+    });
+
+    if (doc) res.json(doc);
+    else res.status(404).json({ error: "User not found" });
+
+  } catch (error) {
+    res.status(500).json({ error });
+  }
 };
 
 exports.students = async function(req, res) {

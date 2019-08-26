@@ -45,7 +45,16 @@ export class ScheduleStore {
       const result = await ScheduleApi.updateSchedule(authStore.token, id, data);
 
       this.closeModal = true;
-      this.scheduleList = this.scheduleList.map(el => el._id === id ? result : el);
+
+      if (result.typeOfTime !== authStore.setting.typeOfTime) {
+        globalAlertsStore.addAlert({
+          title: "Successfully added",
+          message: "Schedule was added, to show it you need switch type of time in header"
+        });
+
+        this.scheduleList = this.scheduleList.filter(e => e._id !== id);
+      }
+      else this.scheduleList = this.scheduleList.map(el => el._id === id ? result : el);
 
     } catch (error) {
       handleError(error);

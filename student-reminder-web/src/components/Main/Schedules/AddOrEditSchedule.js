@@ -57,7 +57,7 @@ function AddOrEditSchedule({ open, setOpen, scheduleId, setScheduleId, errors, s
     setValues({
       startTime: new Date(),
       endTime: new Date(date.setMinutes(date.getMinutes() + lessonTime)),
-      typeOfTime: "full",
+      typeOfTime: auth.setting.typeOfTime,
       numberInSchedule: "",
       dayOfWeek: new Date().getDay()
     });
@@ -106,7 +106,6 @@ function AddOrEditSchedule({ open, setOpen, scheduleId, setScheduleId, errors, s
               KeyboardButtonProps={{
                 'aria-label': 'change time',
               }}
-              ampm={false}
             />
             <KeyboardTimePicker
               className={classes.timePickerRight}
@@ -117,7 +116,6 @@ function AddOrEditSchedule({ open, setOpen, scheduleId, setScheduleId, errors, s
               KeyboardButtonProps={{
                 'aria-label': 'change time',
               }}
-              ampm={false}
             />
           </DialogContent>
           <DialogContent>
