@@ -53,12 +53,13 @@ export class AuthStore {
       const data = await AuthApi.signIn(signInData);
 
       if (data.verified) {
+        //TODO fix it
         this.token = data.token;
         this.group = data.group;
         this.setting = data.setting;
         await sendPushToken(data.token);
       }
-      
+
     } catch (obj) {
       AuthStore.handleError(obj);
     } finally {
