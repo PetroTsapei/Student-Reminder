@@ -51,10 +51,11 @@ router.post('/api/push-token', [tokenVerify, setCurrentRole, tokenValidate, setU
 router.delete('/api/push-token', [tokenVerify, setCurrentRole, tokenValidate, setUserId], UserController.deletePushToken);
 router.get('/api/students/:groupId', [tokenVerify, setCurrentRole, tokenValidate], UserController.students);
 router.get('/api/deep-link-validate/:userId', UserController.deepLinkValidate);
-router.put('/api/finish-registration/:userId', UserController.finishRegistration);
+router.put('/api/finish-registration/:id', [validatePhone], UserController.finishRegistration);
 router.get('/api/teachers', [tokenVerify, setCurrentRole, tokenValidate], UserController.getTeachers);
 router.get('/api/curators', [tokenVerify, setCurrentRole, tokenValidate], UserController.getCurators);
+router.get('/api/users', [tokenVerify, setCurrentRole, tokenValidate], UserController.getInfo);
 router.delete('/api/users/:id', [tokenVerify, adminVerify, tokenValidate], UserController.delete);
-router.put('/api/users/:id', [tokenVerify, adminVerify, tokenValidate, validatePhone, validateEmail], UserController.update);
+router.put('/api/users/:id', [tokenVerify, setCurrentRole, tokenValidate, setUserId, validatePhone, validateEmail], UserController.update);
 
 module.exports = router;

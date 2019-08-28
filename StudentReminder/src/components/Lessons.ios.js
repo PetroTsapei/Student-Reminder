@@ -1,14 +1,14 @@
 import React, { useContext, useEffect, useState } from 'react';
 
 import { Text, ScrollView, RefreshControl } from 'react-native';
-import { 
-  Title, 
-  Header, 
-  Body, 
-  ScrollableTab, 
-  Tabs, 
-  Tab, 
-  Spinner, 
+import {
+  Title,
+  Header,
+  Body,
+  ScrollableTab,
+  Tabs,
+  Tab,
+  Spinner,
   H2,
   H3,
   View,
@@ -31,7 +31,7 @@ export const Lessons = observer(() => {
       let { typeOfTime } = await AuthApi.getSetting(rootStore.authStore.token);
 
       rootStore.lessonsStore.getLessons({
-        typeOfTime: typeOfTime,
+        typeOfTime,
         group: rootStore.authStore.group
       });
     } catch (error) {
@@ -59,7 +59,7 @@ export const Lessons = observer(() => {
       for (let day in dayOfWeek) {
         let weekLessons = [];
         let lessonsForDayOfWeek = lessons.filter(lesson => lesson.schedule.dayOfWeek == day);
-        
+
         if (!lessonsForDayOfWeek.length) {
           weekLessons.push(notification('No lessons for this day'))
         }
@@ -92,6 +92,7 @@ export const Lessons = observer(() => {
           tabArr.push(
             <Tab key={day} heading={dayOfWeek[day]}>
               <ScrollView
+                contentContainerStyle={{flexGrow: 1}}
                 refreshControl={
                   <RefreshControl
                     refreshing={refreshing}

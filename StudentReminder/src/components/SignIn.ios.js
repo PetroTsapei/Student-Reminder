@@ -5,12 +5,12 @@ import { findNumbers } from 'libphonenumber-js';
 import { Text } from 'react-native';
 import {
   Container,
-  Header, 
-  Content, 
-  Form, 
-  Item, 
-  Input, 
-  Label, 
+  Header,
+  Content,
+  Form,
+  Item,
+  Input,
+  Label,
   Title,
   Left,
   Right,
@@ -81,9 +81,9 @@ export const SignIn = observer(() => {
               errors.password ?
                 <Label style={styles.error}>{errors.password}</Label>
                 :
-                <Label>Password</Label>   
+                <Label>Password</Label>
             }
-            <Input 
+            <Input
               secureTextEntry={true}
               value={values.password}
               onChangeText={text => handleChange(text, 'password')}

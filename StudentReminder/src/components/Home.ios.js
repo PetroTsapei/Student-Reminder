@@ -1,21 +1,14 @@
 import React, { useContext, useState, useEffect } from 'react';
 import {
   Container,
-  Content,
   Footer,
   FooterTab,
   Button,
   Icon,
   Text,
-  Body,
-  Header,
-  Title,
-  ListItem,
-  Left,
-  Right,
-  Switch,
 } from 'native-base';
-import getDirections from 'react-native-google-maps-directions'
+import getDirections from 'react-native-google-maps-directions';
+import { Setting } from './Setting';
 import { Image, Alert, View } from 'react-native';
 import { Lessons } from '../components/Lessons';
 import College from '../assets/images/college.png';
@@ -28,14 +21,20 @@ import styles from '../assets/styles/Home';
 export const Home = ({ history }) => {
   const rootStore = useContext(RootStoreContext);
   const [initialRegion, setInitialRegion] = useState({});
+  const [markerIsOpen, setMarkerIsOpen] = useState(false);
 
-  const goTo = path => history.push(path);
+  const goTo = path => {
+    setMarkerIsOpen(false);
+    history.push(path);
+    rootStore.lessonsStore.reset();
+    rootStore.authStore.resetUserInfo();
+  };
+
   const isActive = path => history.location.pathname === path;
   const onSignOut = () => {
     rootStore.authStore.signOut();
     history.push('/');
   };
-
 
   const handleGetDirections = () => {
     const data = {
@@ -86,58 +85,37 @@ export const Home = ({ history }) => {
     switch(history.location.pathname) {
       case '/': return <Lessons />;
       case '/:settings': return (
-        <>
-          <Header>
-            <Left />
-            <Body>
-              <Title>
-                Settings
-              </Title>
-            </Body>
-            <Right>
-              <Button transparent>
-                <Text>Edit</Text>
-              </Button>
-            </Right>
-          </Header>
-          <Content>
-            <ListItem icon>
-              <Left>
-                <Button style={{ backgroundColor: "#007AFF" }}>
-                  <Icon active name="notifications" />
-                </Button>
-              </Left>
-              <Body>
-                <Text>Notifications</Text>
-              </Body>
-              <Right>
-                <Switch value={false} />
-              </Right>
-            </ListItem>
-            <Button full danger style={styles.settingSignOut} onPress={onSignOut}>
-              <Text>Sign Out</Text>
-            </Button>
-          </Content>
-        </>
+        <Setting
+          onSignOut={onSignOut}
+        />
       );
       case '/:map': {
         if (Object.keys(initialRegion).length) {
           return (
-            <MapView
-              showsUserLocation={true}
-              followUserLocation={true}
-              zoomEnabled={true}
-              style={styles.map}
-              initialRegion={initialRegion}
-            >
-              <Marker
-                coordinate={{ longitude, latitude }}
-                title="College of electronic devices"
-                onPress={handleGetDirections}
+            <>
+              <MapView
+                showsUserLocation={true}
+                followUserLocation={true}
+                zoomEnabled={true}
+                style={styles.map}
+                initialRegion={initialRegion}
+                onMarkerDeselect={() => setMarkerIsOpen(false)}
+                onMarkerSelect={() => setMarkerIsOpen(true)}
               >
-                <Image source={College} style={{ width: 40, height: 40 }} />
-              </Marker>
-            </MapView>
+                <Marker
+                  coordinate={{ longitude, latitude }}
+                  title="College of electronic devices"
+                >
+                  <Image source={College} style={{ width: 40, height: 40 }} />
+                </Marker>
+              </MapView>
+              {
+                markerIsOpen &&
+                  <Button full onPress={handleGetDirections}>
+                    <Text>Get direction</Text>
+                  </Button>
+              }
+            </>
           )
         } else return (
           <View style={styles.mapLoading}>

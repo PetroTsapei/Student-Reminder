@@ -11,12 +11,18 @@ export class AuthStore {
   }
 
   @persist @observable token = "";
-  @persist @observable group = "";
-  @persist('object') @observable setting = {};
+  @persist @observable group = undefined;
+  @persist @observable enableNotifications = true;
+  @observable userInfo = {};
 
   static handleError(obj) {
-    if (obj.error) Alert.alert(
-      'Sign In Error',
+    console.log(obj.errors);
+    if (obj.errors) Alert.alert(
+      'Field error',
+      Object.values(obj.errors)[0].message
+    );
+    else if (obj.error) Alert.alert(
+      'Error',
       obj.error
     );
     else Alert.alert(
@@ -53,11 +59,9 @@ export class AuthStore {
       const data = await AuthApi.signIn(signInData);
 
       if (data.verified) {
-        //TODO fix it
         this.token = data.token;
         this.group = data.group;
-        this.setting = data.setting;
-        await sendPushToken(data.token);
+        if (this.enableNotifications) await sendPushToken(data.token);
       }
 
     } catch (obj) {
@@ -68,11 +72,45 @@ export class AuthStore {
   }
 
   @action
+  async switchNotifications(value) {
+    this.enableNotifications = value;
+
+    if (value) await sendPushToken(this.token);
+    else AuthApi.deletePushToken(this.token);
+  }
+
+  @action
+  async getUserInfo() {
+    try {
+      this.rootStore.fetchingStore.setFetchState(true);
+
+      this.userInfo = await AuthApi.getUserInfo(this.token);
+    } catch (error) {
+      AuthStore.handleError(error);
+    } finally {
+      this.rootStore.fetchingStore.setFetchState(false);
+    }
+  }
+
+  @action
+  async updateInfo(id, data) {
+    try {
+      this.userInfo = await AuthApi.updateUserInfo(id, data, this.token);
+
+    } catch (error) {
+      AuthStore.handleError(error);
+    }
+  }
+
+  @action
+  resetUserInfo() {
+    this.userInfo = {};
+  }
+
+  @action
   signOut() {
     AuthApi.deletePushToken(this.token);
     this.token = "";
-    this.group = "";
-    this.setting = {};
     this.rootStore.lessonsStore.reset();
   }
 }

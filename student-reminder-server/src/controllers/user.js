@@ -165,7 +165,7 @@ exports.verify = function(req, res) {
 
           jwt.sign({ user }, user.role, (err, token) => {
             if (err) res.status(500).json(err);
-            
+
             res.status(200).json({
               token,
               role: user.role,
@@ -249,12 +249,12 @@ exports.deepLinkValidate = async function (req, res) {
 exports.finishRegistration = async function (req, res) {
   try {
 
-    const user = await UserModel.findById(req.params.userId);
+    const user = await UserModel.findById(req.params.id);
 
     if (!user) return res.status(404).json({ error: "User not found" });
     else if (user.verified) return res.status(400).json({ error: "User already verified" });
 
-    await UserModel.findByIdAndUpdate(req.params.userId, {
+    await UserModel.findByIdAndUpdate(req.params.id, {
       $set: {
         countryCode: req.body.countryCode,
         phone: req.body.phone,
@@ -321,8 +321,31 @@ exports.delete = async function (req, res) {
   }
 };
 
+exports.getInfo = async function(req, res) {
+  try {
+    const decodeJWT = jwt.decode(req.token);
+
+    if (decodeJWT) {
+      const user = await UserModel.findById(decodeJWT.user._id);
+
+      res.json({
+        countryCode: user.countryCode,
+        phone: user.phone,
+        fullName: user.fullName,
+        email: user.email,
+        _id: user._id
+      })
+    } else res.status(404).json({ error: "User not found" });
+
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+};
+
 exports.update = async function (req, res) {
   try {
+    if (req.role !== 'admin' && req.params.id !== req.id) return res.status(400).json({ error: "Don't have permissions" });
+
     let user = await UserModel.findByIdAndUpdate(req.params.id, req.body, { new: true });
 
     if (!req.body.groupLeader) {
@@ -339,6 +362,7 @@ exports.update = async function (req, res) {
     });
   } catch (error) {
     if (error.code === mongoCodes.notRequired) res.status(400).json({ error: "User with this email already created" });
+    else if (error.errors) res.status(400).json({ errors: error.errors });
     else res.status(500).json({ error });
   }
 };
