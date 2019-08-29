@@ -358,8 +358,11 @@ exports.update = async function (req, res) {
       await GroupModel.findByIdAndUpdate(user.group, { $set: { groupLeader: req.params.id } });
     }
 
+    let group = await GroupModel.findById(user.group);
+
     res.json({
       ...user._doc,
+      groupName: group.groupName,
       ...( req.body.groupLeader ? { groupLeader: true } : {} )
     });
   } catch (error) {
