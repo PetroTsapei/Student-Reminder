@@ -1,4 +1,5 @@
 const SubjectModel = require('../models/subject');
+const LessonModel = require('../models/lesson');
 const mongoCodes = require('../constants/mongoCodes');
 
 exports.post = function(req, res) {
@@ -73,8 +74,12 @@ exports.delete = function(req, res) {
   SubjectModel.findOneAndRemove({
     _id: req.params.id
   })
-    .then(doc => {
-      if (doc) res.json(doc);
+    .then(async doc => {
+      if (doc) {
+        await LessonModel.deleteMany({ subject: doc._id });
+
+        res.json(doc);
+      }
       else res.status(404).json({ message: "Subject not found" });
     })
     .catch(err => {
