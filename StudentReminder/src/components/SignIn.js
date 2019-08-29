@@ -24,7 +24,7 @@ import { RootStoreContext } from '../stores/RootStore';
 
 import styles from '../assets/styles/SignIn';
 
-export const SignIn = observer(() => {
+export default SignIn = observer(() => {
   const rootStore = useContext(RootStoreContext);
 
   const {

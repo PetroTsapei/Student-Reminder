@@ -8,9 +8,9 @@ import {
   Text,
 } from 'native-base';
 import getDirections from 'react-native-google-maps-directions';
-import { Setting } from './Setting';
-import { Image, Alert, View } from 'react-native';
-import { Lessons } from '../components/Lessons';
+import Setting from './Setting';
+import { Image, View } from 'react-native';
+import Lessons from '../components/Lessons';
 import College from '../assets/images/college.png';
 import MapView, { Marker } from 'react-native-maps';
 import { RootStoreContext } from '../stores/RootStore';
@@ -18,7 +18,7 @@ import { latitude, longitude } from '../constants/collegeCoords';
 
 import styles from '../assets/styles/Home';
 
-export const Home = ({ history }) => {
+export default Home = ({ history }) => {
   const rootStore = useContext(RootStoreContext);
   const [initialRegion, setInitialRegion] = useState({});
   const [markerIsOpen, setMarkerIsOpen] = useState(false);
@@ -70,7 +70,7 @@ export const Home = ({ history }) => {
 
         setInitialRegion(region);
       },
-      error => Alert.alert('Error', error),
+      () => null,
       {
         enableHighAccuracy: true,
         timeout: 20000,

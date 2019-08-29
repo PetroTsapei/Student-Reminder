@@ -22,7 +22,7 @@ import { observer } from 'mobx-react-lite';
 import moment from 'moment';
 import styles from '../assets/styles/Home';
 
-export const Lessons = observer(() => {
+export default Lessons = observer(() => {
   const rootStore = useContext(RootStoreContext);
   const [refreshing, setRefreshing] = useState(false);
 

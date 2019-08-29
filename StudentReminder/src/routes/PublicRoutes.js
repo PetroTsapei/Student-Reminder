@@ -2,8 +2,8 @@ import React from 'react';
 import withRouterStore from '../helpers/withRouterStore';
 import { Route } from 'react-router-native';
 
-import { SignUp } from '../components/SignUp';
-import { SignIn } from '../components/SignIn';
+import SignUp from '../components/SignUp';
+import SignIn from '../components/SignIn';
 import routerStore from '../stores/RouterStore';
 
 const routes = [

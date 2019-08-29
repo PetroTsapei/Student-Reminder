@@ -19,7 +19,7 @@ import styles from "../assets/styles/Home";
 import { RootStoreContext } from "../stores/RootStore";
 import {findNumbers} from "libphonenumber-js";
 
-export const Setting = observer(props => {
+const Setting = observer(props => {
   const rootStore = useContext(RootStoreContext);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -40,12 +40,21 @@ export const Setting = observer(props => {
       fullName,
       countryCode,
       phone,
+      groupName,
       email,
       _id
     } = rootStore.authStore.userInfo;
 
     return(
       <>
+        <ListItem thumbnail>
+          <Left />
+          <Body>
+            <Text>Group</Text>
+            <Text note numberOfLines={1}>{groupName}</Text>
+          </Body>
+          <Right />
+        </ListItem>
         <ListItem thumbnail>
           <Left />
           <Body>
@@ -198,3 +207,5 @@ export const Setting = observer(props => {
     </>
   )
 });
+
+export default Setting

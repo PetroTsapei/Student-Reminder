@@ -1,13 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Alert } from 'react-native';
-import { 
-  Container, 
-  Header, 
-  Content, 
-  Form, 
-  Item, 
-  Input, 
-  Label, 
+import {
+  Container,
+  Header,
+  Content,
+  Form,
+  Item,
+  Input,
+  Label,
   Title,
   Left,
   Right,
@@ -27,7 +27,7 @@ import styles from '../assets/styles/SignUp';
 import AuthApi from "../api/auth";
 
 
-export const SignUp = observer(({ history }) => {
+export default SignUp = observer(({ history }) => {
   const rootStore = useContext(RootStoreContext);
   const [linkVerified, setLinkVerified] = useState(false);
 

@@ -16,7 +16,6 @@ export class AuthStore {
   @observable userInfo = {};
 
   static handleError(obj) {
-    console.log(obj.errors);
     if (obj.errors) Alert.alert(
       'Field error',
       Object.values(obj.errors)[0].message
