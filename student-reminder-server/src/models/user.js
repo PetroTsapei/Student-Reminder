@@ -18,7 +18,7 @@ const UserSchema = new mongoose.Schema({
   authyId: String,
   verified: {
     type: Boolean,
-    default: false,
+    default: function () { return this.role === 'admin' },
   },
   email: {
     type: String,

@@ -7,6 +7,7 @@ const scheduleRoute = require('./routes/schedule');
 const lessonRoute = require('./routes/lesson');
 const settingRoute = require('./routes/setting');
 const bodyParser = require('body-parser');
+require('./migrations/setAdmin');
 require('dotenv').config();
 
 // cors policy
