@@ -5,7 +5,6 @@ const SubjectModel = require('../models/subject');
 const UserModel = require('../models/user');
 const asyncForEach = require('../helpers/asyncForEach');
 const moment = require('moment');
-const sendPushWithExpo = require('../helpers/sendPushWithExpo');
 
 Date.prototype.getWeekOfMonth = function() {
   let firstWeekday = new Date(this.getFullYear(), this.getMonth(), 1).getDay();
@@ -38,7 +37,6 @@ exports.post = async function(req, res) {
       }
     });
 
-    // sendPushWithExpo(['ExponentPushToken[Mvio75Fh88WDjXE8m3hQ4J]'], { body: 'Test', sound: 'default' });
   } catch (error) {
     console.log(error);
     res.status(500).json(error);

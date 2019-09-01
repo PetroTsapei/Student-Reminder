@@ -330,17 +330,21 @@ exports.getInfo = async function(req, res) {
 
     if (decodeJWT) {
       const user = await UserModel.findById(decodeJWT.user._id);
-      const group = await GroupModel.findById(user.group);
 
-      res.json({
-        countryCode: user.countryCode,
-        phone: user.phone,
-        fullName: user.fullName,
-        email: user.email,
-        groupName: group.groupName,
-        _id: user._id
-      })
-    } else res.status(404).json({ error: "User not found" });
+      if (user) {
+        const group = await GroupModel.findById(user.group);
+
+        res.json({
+          countryCode: user.countryCode,
+          phone: user.phone,
+          fullName: user.fullName,
+          email: user.email,
+          groupName: group.groupName,
+          _id: user._id
+        })
+      } else res.status(401).json({ error: "User not found" });
+
+    } else res.status(403).json({ error: "Don't have permissions" });
 
   } catch (error) {
     res.status(500).json({ error });
@@ -349,7 +353,7 @@ exports.getInfo = async function(req, res) {
 
 exports.update = async function (req, res) {
   try {
-    if (req.role !== 'admin' && req.params.id !== req.id) return res.status(400).json({ error: "Don't have permissions" });
+    if (req.role !== 'admin' && req.params.id !== req.id) return res.status(403).json({ error: "Don't have permissions" });
 
     let user = await UserModel.findByIdAndUpdate(req.params.id, req.body, { new: true });
 

@@ -11,6 +11,7 @@ const roleVerify = require('../helpers/roleVerify');
 const groupVerify = require('../helpers/getGroupName');
 const setCurrentRole = require('../helpers/setCurrentRole');
 const compareObj = require('../helpers/compareObj');
+const jwt = require('jsonwebtoken');
 const express = require('express');
 const router = express.Router();
 
@@ -67,8 +68,22 @@ lessonValidate = (req, res, next) => {
     .catch(error => res.status(500).json(error))
 };
 
+checkIfExistUser = async (req, res, next) => {
+  const {
+    user: {
+      _id
+    }
+  } = jwt.decode(req.token);
+
+  const user = await UserModel.findById(_id);
+
+  if (!user) return res.status(401).json({ error: "User not found" });
+
+  next();
+};
+
 router.post('/api/lessons', [tokenVerify, bodyValidator, adminVerify, tokenValidate, lessonValidate], LessonController.post);
-router.get('/api/lessons', [tokenVerify, groupVerify, setCurrentRole, tokenValidate], LessonController.getAllByGroup);
+router.get('/api/lessons', [tokenVerify, groupVerify, setCurrentRole, tokenValidate, checkIfExistUser], LessonController.getAllByGroup);
 router.get('/api/lessons/all', [tokenVerify, adminVerify, tokenValidate], LessonController.getAll);
 router.get('/api/lessons/:id', [tokenVerify, setCurrentRole, tokenValidate], LessonController.getById);
 router.put('/api/lessons/:id', [tokenVerify, adminVerify, tokenValidate, lessonValidate], LessonController.put);

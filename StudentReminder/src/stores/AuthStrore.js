@@ -15,11 +15,12 @@ export class AuthStore {
   @persist @observable enableNotifications = true;
   @observable userInfo = {};
 
-  static handleError(obj) {
+  handleError(obj) {
     if (obj.errors) Alert.alert(
       'Field error',
       Object.values(obj.errors)[0].message
     );
+    else if (obj.status === 401) this.signOut();
     else if (obj.error) Alert.alert(
       'Error',
       obj.error
@@ -45,7 +46,7 @@ export class AuthStore {
         }},
       ])
     } catch (obj) {
-      AuthStore.handleError(obj);
+      this.handleError(obj);
     } finally {
       this.rootStore.fetchingStore.setFetchState(false);
     }
@@ -64,7 +65,7 @@ export class AuthStore {
       }
 
     } catch (obj) {
-      AuthStore.handleError(obj);
+      this.handleError(obj);
     } finally {
       this.rootStore.fetchingStore.setFetchState(false);
     }
@@ -85,7 +86,7 @@ export class AuthStore {
 
       this.userInfo = await AuthApi.getUserInfo(this.token);
     } catch (error) {
-      AuthStore.handleError(error);
+      this.handleError(error);
     } finally {
       this.rootStore.fetchingStore.setFetchState(false);
     }
@@ -97,7 +98,7 @@ export class AuthStore {
       this.userInfo = await AuthApi.updateUserInfo(id, data, this.token);
 
     } catch (error) {
-      AuthStore.handleError(error);
+      this.handleError(error);
     }
   }
 
@@ -111,5 +112,6 @@ export class AuthStore {
     AuthApi.deletePushToken(this.token);
     this.token = "";
     this.rootStore.lessonsStore.reset();
+    routerStore.history.push('/');
   }
 }

@@ -1,6 +1,6 @@
-import {action, observable} from 'mobx';
+import { action, observable } from 'mobx';
 import LessonsApi from '../api/lessons';
-import {Alert} from 'react-native';
+import { Alert } from 'react-native';
 
 export class LessonsStore {
   constructor(rootStore) {
@@ -20,7 +20,8 @@ export class LessonsStore {
       });
 
     } catch (error) {
-      if (error.message) {
+      if (error.status === 401) this.rootStore.authStore.signOut();
+      else if (error.message) {
         Alert.alert(
           'Error',
           error.message
