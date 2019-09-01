@@ -7,6 +7,7 @@ import Fab from '@material-ui/core/Fab';
 import Tooltip from '@material-ui/core/Tooltip';
 import GroupListItem from './GroupListItem';
 import AddOrEditGroup from './AddOrEditGroup';
+import NotFound from '../../global/NotFound';
 
 const useStyles = makeStyles(theme => ({
   fixed: {
@@ -49,7 +50,7 @@ function GroupList({ groups }) {
         />
       ))
     } else return (
-      <div>Not found</div>
+      <NotFound />
     )
   }
 
@@ -62,8 +63,8 @@ function GroupList({ groups }) {
         </Fab>
       </Tooltip>
       <AddOrEditGroup
-        groupId={groupId} 
-        open={open} 
+        groupId={groupId}
+        open={open}
         setOpen={setOpen}
         setGroupId={setGroupId}
       />

@@ -128,9 +128,9 @@ export default inject('auth')(observer(function SignIn({ auth }) {
           />
           <FormControlLabel
             control={
-              <Checkbox 
-                value="remember" 
-                color="primary" 
+              <Checkbox
+                value="remember"
+                color="primary"
                 onChange={e => setNeedToRemember(e.target.checked)}
               />
             }
@@ -146,16 +146,16 @@ export default inject('auth')(observer(function SignIn({ auth }) {
             Sign In
           </Button>
           <Grid container>
-            <Grid item xs>
-              <Link component={RouterLink} to="/wishlist" variant="body2">
-                Forgot password?
-              </Link>
-            </Grid>
-            <Grid item>
-              <Link component={RouterLink} to="/sign-up" variant="body2">
-                {"Don't have an account? Sign Up"}
-              </Link>
-            </Grid>
+            {/*<Grid item xs>*/}
+            {/*  <Link component={RouterLink} to="/forgot-password" variant="body2">*/}
+            {/*    Forgot password?*/}
+            {/*  </Link>*/}
+            {/*</Grid>*/}
+            {/*<Grid item>*/}
+            {/*  <Link component={RouterLink} to="/sign-up" variant="body2">*/}
+            {/*    {"Don't have an account? Sign Up"}*/}
+            {/*  </Link>*/}
+            {/*</Grid>*/}
           </Grid>
         </form>
       </div>

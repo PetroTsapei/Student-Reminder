@@ -1,7 +1,7 @@
 import { apiUrl } from '../constants/apiConsts';
 import fetchRequest from '../helpers/request';
 
-export default class StudentApi {
+export default class UserApi {
   static getByGroupId({ token, groupId }) {
     const request = new Request(`${apiUrl}/students/${groupId}`, {
       method: "GET",

@@ -14,6 +14,7 @@ import { studentStore } from './stores/StudentStore';
 import { subjectStore } from './stores/SubjectStore';
 import { scheduleStore } from './stores/ScheduleStore';
 import { lessonStore } from './stores/LessonStore';
+import { teacherStore } from './stores/TeacherStore';
 
 const browserHistory = createBrowserHistory();
 const routingStore = new RouterStore();
@@ -30,7 +31,8 @@ const stores = {
   students: studentStore,
   subjects: subjectStore,
   schedules: scheduleStore,
-  lessons: lessonStore
+  lessons: lessonStore,
+  teachers: teacherStore
 };
 
 ReactDOM.render(

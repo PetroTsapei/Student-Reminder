@@ -1,5 +1,6 @@
 const UserModel = require('../models/user');
 const GroupModel = require('../models/group');
+const LessonModel = require('../models/lesson');
 const SettingModel = require('../models/setting');
 const mongoCodes = require('../constants/mongoCodes');
 const roleVerify = require('../helpers/roleVerify');
@@ -314,6 +315,8 @@ exports.delete = async function (req, res) {
     let user = await UserModel.findByIdAndRemove(req.params.id);
 
     await GroupModel.updateOne({ groupLeader: req.params.id }, { $unset: { groupLeader: "" } });
+    await GroupModel.updateOne({ groupCurator: req.params.id }, { $unset: { groupCurator: "" } });
+    await LessonModel.deleteMany({ teacher: req.params.id });
 
     res.json(user);
   } catch (error) {
@@ -362,7 +365,7 @@ exports.update = async function (req, res) {
 
     res.json({
       ...user._doc,
-      groupName: group.groupName,
+      ...(group ? { groupName: group.groupName } : {}),
       ...( req.body.groupLeader ? { groupLeader: true } : {} )
     });
   } catch (error) {

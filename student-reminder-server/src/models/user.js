@@ -27,7 +27,7 @@ const UserSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: function() { return this.role !== 'student' },
+    required: function() { return this.role === 'admin' },
   },
   group: {
     type: ObjectId,

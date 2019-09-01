@@ -11,7 +11,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Autocomplete from '../../global/Autocomplete';
 import GroupApi from '../../../api/groups';
 import AuthApi from '../../../api/auth';
-import StudentApi from '../../../api/students';
+import UserApi from '../../../api/users';
 import handleError from '../../../helpers/handleError';
 import moment from 'moment';
 
@@ -70,7 +70,7 @@ function AddOrEditGroup({ open, setOpen, groupId, setGroupId, groups, errors, au
       setGroupId('');
     }, 200);
   }
-  
+
   async function fetchCurators() {
     try {
       setLoading('curators');
@@ -94,7 +94,7 @@ function AddOrEditGroup({ open, setOpen, groupId, setGroupId, groups, errors, au
   async function fetchGroupStudents() {
     try {
       setLoading('students');
-      let data = await StudentApi.getByGroupId({ token: auth.token, groupId });
+      let data = await UserApi.getByGroupId({ token: auth.token, groupId });
 
       setOptions({
         ...options,
@@ -112,9 +112,9 @@ function AddOrEditGroup({ open, setOpen, groupId, setGroupId, groups, errors, au
   }
 
   return (
-    <Dialog 
+    <Dialog
       scroll="paper"
-      open={open} 
+      open={open}
       aria-labelledby="form-dialog-title"
       maxWidth="sm"
       fullWidth={true}
@@ -137,7 +137,7 @@ function AddOrEditGroup({ open, setOpen, groupId, setGroupId, groups, errors, au
           />
         </DialogContent>
         {
-          groupId && 
+          groupId &&
             <>
               <Autocomplete
                 options={options.curators}
@@ -153,7 +153,7 @@ function AddOrEditGroup({ open, setOpen, groupId, setGroupId, groups, errors, au
                 onChange={val => handleChange(val, 'groupCurator')}
                 isClearable
               />
-              <Autocomplete 
+              <Autocomplete
                 options={options.students}
                 label="Group Leader"
                 placeholder="Select a student"

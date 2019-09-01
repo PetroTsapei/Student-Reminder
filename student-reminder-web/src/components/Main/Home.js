@@ -9,6 +9,7 @@ import StudentList from './Students/StudentList';
 import Subjects from './Subjects';
 import Schedules from './Schedules';
 import Lessons from './Lessons';
+import Teachers from './Teachers';
 
 const useStyles = makeStyles({
   root: {
@@ -29,6 +30,7 @@ export default function Home({ history, match }) {
       case '/subjects': return <Subjects />;
       case '/schedules': return <Schedules />;
       case '/lessons': return <Lessons />;
+      case '/teachers': return <Teachers />;
       default: return <StudentList goBack={history.goBack} groupId={match.params.groupId} />
     }
   }

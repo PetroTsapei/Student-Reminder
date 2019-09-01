@@ -16,6 +16,7 @@ import Fab from '@material-ui/core/Fab';
 import Tooltip from '@material-ui/core/Tooltip';
 import AddIcon from '@material-ui/icons/Add';
 import CloseIcon from '@material-ui/icons/Close';
+import NotFound from '../../global/NotFound';
 
 const useStyles = makeStyles(theme => ({
   fixed: {
@@ -90,25 +91,27 @@ function Subjects({ subjects, routing }) {
 
   function _renderItems() {
     if (subjects.subjectList.length) return (
-      subjects.subjectList.map((item, key) => (
-        <SubjectList
-          item={item}
-          key={key}
-          update={(name) => subjects.update({id: item._id, name})}
-          deleteItem={() => subjects.delete(item._id)}
-        />
-      ))
+      <Grid item xs={12}>
+        <List dense>
+          {
+            subjects.subjectList.map((item, key) => (
+              <SubjectList
+                item={item}
+                key={key}
+                update={(name) => subjects.update({id: item._id, name})}
+                deleteItem={() => subjects.delete(item._id)}
+              />
+            ))
+          }
+        </List>
+      </Grid>
     );
-    else return <div>Not found</div>
+    else return <NotFound />
   }
 
   return (
     <Grid container spacing={3}>
-      <Grid item xs={12}>
-        <List dense>
-          { _renderItems() }
-        </List>
-      </Grid>
+      { _renderItems() }
       <Tooltip title="Add subject" aria-label="add">
         <Fab color="primary" className={classes.fixed} onClick={() => setOpen(true)}>
           <AddIcon />
