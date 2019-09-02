@@ -1,9 +1,10 @@
 const mongoose = require('mongoose');
+require('dotenv').config();
 
-const server = "localhost:27017";
-const database = "student-reminder";
-const user = "";
-const password = "";
+const server = process.env.SERVER;
+const database = process.env.DATABASE;
+const user = process.env.DB_USER;
+const password = process.env.DB_PASSWORD;
 
 mongoose.plugin(schema => {
   schema.pre('findOneAndUpdate', setRunValidators);
