@@ -24,6 +24,8 @@ export default Home = ({ history }) => {
   const [markerIsOpen, setMarkerIsOpen] = useState(false);
 
   const goTo = path => {
+    if (history.location.pathname === path) return;
+
     setMarkerIsOpen(false);
     history.push(path);
     rootStore.lessonsStore.reset();

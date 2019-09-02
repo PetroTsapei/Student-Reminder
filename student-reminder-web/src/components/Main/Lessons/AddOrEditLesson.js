@@ -122,7 +122,7 @@ function AddOrEditLesson({ open, setOpen, lessonId, setLessonId, errors, auth, l
         ...options,
         ['schedules']: result.schedules.map(elem => ({
           value: elem._id,
-          label: `${moment.weekdays(elem.dayOfWeek)} (${moment(elem.startTime).format('HH:mm')} - ${moment(elem.endTime).format('HH:mm')}) - ${elem.numberInSchedule}`
+          label: `${moment.weekdays(elem.dayOfWeek)} (${moment(elem.startTime).format('LT')} - ${moment(elem.endTime).format('LT')}) - ${elem.numberInSchedule}`
         }))
       })
 

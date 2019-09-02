@@ -7,9 +7,9 @@ const asyncForEach = require('../helpers/asyncForEach');
 const moment = require('moment');
 
 Date.prototype.getWeekOfMonth = function() {
-  let firstWeekday = new Date(this.getFullYear(), this.getMonth(), 1).getDay();
-  let offsetDate = this.getDate() + firstWeekday - 1;
-  return Math.floor(offsetDate / 7);
+  let countMonths = moment(`${new Date().getFullYear()}-09-01`).diff(moment(new Date()), 'week');
+
+  return countMonths || 1
 };
 
 exports.post = async function(req, res) {
@@ -157,7 +157,7 @@ exports.getById = async function (req, res) {
         },
         schedule: {
           value: result.schedule,
-          label: `${moment.weekdays(schedule.dayOfWeek)} (${moment(schedule.startTime).format('HH:mm')} - ${moment(schedule.endTime).format('HH:mm')}) - ${schedule.numberInSchedule}`
+          label: `${moment.weekdays(schedule.dayOfWeek)} (${moment(schedule.startTime).format('LT')} - ${moment(schedule.endTime).format('LT')}) - ${schedule.numberInSchedule}`
         },
         teacher: {
           value: result.teacher,

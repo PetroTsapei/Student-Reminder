@@ -355,7 +355,20 @@ exports.update = async function (req, res) {
   try {
     if (req.role !== 'admin' && req.params.id !== req.id) return res.status(403).json({ error: "Don't have permissions" });
 
+    let oldUserData = await UserModel.findById(req.params.id);
     let user = await UserModel.findByIdAndUpdate(req.params.id, req.body, { new: true });
+
+    // send link on update user email if user not active yet
+    if (user.role === 'student' && !user.verified && req.body.email !== oldUserData.email) {
+
+      let { groupName } = await GroupModel.findById(user.group);
+
+      sendEmail(req, res, {
+        to: user.email,
+        subject: `Welcome to ${groupName}, you was added in studentReminder app`,
+        html: `Link to finished registration: <a href="${process.env.CLIENT_URL}/redirect?url=${process.env.MOBILE_HOST}?phone=${user.countryCode.replace('+', '')}${user.phone}&id=${user._id}">Open app</a>`
+      })
+    }
 
     if (!req.body.groupLeader) {
       await GroupModel.updateOne({ groupLeader: req.params.id }, { $unset: { groupLeader: "" } });

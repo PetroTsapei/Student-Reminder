@@ -17,8 +17,6 @@ const encrypt = require('../helpers/encrypt');
 
     let doc = await model.save();
 
-    console.log(doc);
-
     let settingModel = new SettingModel({
       institution: doc._id
     });
