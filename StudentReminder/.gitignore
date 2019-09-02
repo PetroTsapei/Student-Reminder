@@ -9,3 +9,5 @@ npm-debug.*
 web-build/
 web-report/
 assets/.DS_Store
+/student-reminder-web/.env.local
+/student-reminder-web/build
