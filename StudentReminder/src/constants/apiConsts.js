@@ -1,3 +1,3 @@
 module.exports = {
-  apiUrl: "http://192.168.1.5:3005/api",
+  apiUrl: "http://ec2-18-218-253-254.us-east-2.compute.amazonaws.com:3005/api",
 };
