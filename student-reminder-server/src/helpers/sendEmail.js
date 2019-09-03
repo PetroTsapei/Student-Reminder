@@ -17,6 +17,7 @@ module.exports = function (req, res, data, callback) {
 
   transporter.sendMail(mailOptions, function(error) {
     if (error) {
+      console.log(error);
       res.status(400).json({ error: "Can't send activation link to user" });
     } else callback();
   });
