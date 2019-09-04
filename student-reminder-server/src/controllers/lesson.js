@@ -146,7 +146,7 @@ exports.getById = async function (req, res) {
       const schedule = await ScheduleModel.findById(result.schedule);
       const teacher = await UserModel.findById(result.teacher);
 
-      console.log(req.query.timezone);
+      console.log(typeof req.query.timezone);
 
       res.json({
         subject: {
