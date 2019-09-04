@@ -27,6 +27,7 @@ export default class LessonApi {
   }
 
   static getById(token, id) {
+    console.log(new Date().getTimezoneOffset());
     const request = new Request(`${apiUrl}/lessons/${id}?timezone=${new Date().getTimezoneOffset()}`, {
       method: "GET",
       headers: {
