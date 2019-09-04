@@ -71,8 +71,6 @@ exports.getAll = async function(req, res) {
 
   ScheduleModel
     .find({ typeOfTime: setting.typeOfTime })
-    .skip((resPerPage * page) - resPerPage)
-    .limit(resPerPage)
     .sort({
       dayOfWeek: 1,
       numberInSchedule: 1,
