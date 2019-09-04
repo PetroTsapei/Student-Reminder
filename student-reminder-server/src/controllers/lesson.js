@@ -159,7 +159,7 @@ exports.getById = async function (req, res) {
         },
         schedule: {
           value: result.schedule,
-          label: `${moment.weekdays(schedule.dayOfWeek)} (${moment(schedule.startTime).utcOffset(req.query.timezone).format('LT')} - ${moment(schedule.endTime).format('LT')}) - ${schedule.numberInSchedule}`
+          label: `${moment.weekdays(schedule.dayOfWeek)} (${moment(schedule.startTime).utcOffset(+req.query.timezone).format('LT')} - ${moment(schedule.endTime).format('LT')}) - ${schedule.numberInSchedule}`
         },
         teacher: {
           value: result.teacher,
