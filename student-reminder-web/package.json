@@ -14,7 +14,6 @@
     "mobx-react": "^6.0.3",
     "mobx-react-router": "^4.0.7",
     "moment": "^2.24.0",
-    "moment-timezone": "^0.5.26",
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
     "react-app-rewire-mobx": "^1.0.9",
