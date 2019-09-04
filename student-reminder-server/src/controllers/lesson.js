@@ -146,7 +146,7 @@ exports.getById = async function (req, res) {
       const schedule = await ScheduleModel.findById(result.schedule);
       const teacher = await UserModel.findById(result.teacher);
 
-      console.log(schedule.startTime);
+      console.log(req.query.timezone);
 
       res.json({
         subject: {
@@ -159,7 +159,7 @@ exports.getById = async function (req, res) {
         },
         schedule: {
           value: result.schedule,
-          label: `${moment.weekdays(schedule.dayOfWeek)} (${moment(schedule.startTime).format('l LT')} - ${moment(schedule.endTime).format('l LT')}) - ${schedule.numberInSchedule}`
+          label: `${moment.weekdays(schedule.dayOfWeek)} (${moment(schedule.startTime).format('LT')} - ${moment(schedule.endTime).format('LT')}) - ${schedule.numberInSchedule}`
         },
         teacher: {
           value: result.teacher,

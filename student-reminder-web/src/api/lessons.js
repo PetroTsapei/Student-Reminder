@@ -27,7 +27,7 @@ export default class LessonApi {
   }
 
   static getById(token, id) {
-    const request = new Request(`${apiUrl}/lessons/${id}`, {
+    const request = new Request(`${apiUrl}/lessons/${id}?timezone=${new Date().getTimezoneOffset()}`, {
       method: "GET",
       headers: {
         "Authorization": `Bearer ${token}`,
