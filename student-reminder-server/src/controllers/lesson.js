@@ -5,12 +5,7 @@ const SubjectModel = require('../models/subject');
 const UserModel = require('../models/user');
 const asyncForEach = require('../helpers/asyncForEach');
 const moment = require('moment');
-
-Date.prototype.getWeekOfMonth = function() {
-  let countMonths = moment(`${new Date().getFullYear()}-09-01`).diff(moment(new Date()), 'week');
-
-  return countMonths || 1
-};
+require('../helpers/weekOfMonth');
 
 exports.post = async function(req, res) {
   try {
