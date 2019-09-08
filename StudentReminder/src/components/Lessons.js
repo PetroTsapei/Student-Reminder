@@ -59,18 +59,24 @@ export default Lessons = observer(() => {
       for (let day in dayOfWeek) {
         let weekLessons = [];
         let lessonsForDayOfWeek = lessons.filter(lesson => lesson.schedule.dayOfWeek == day);
+        let isCurrentDay = new Date().getDay() == day;
 
         if (!lessonsForDayOfWeek.length) {
           weekLessons.push(notification('No lessons for this day'))
         }
-        if (new Date().getDay() == day) initialPage = +day;
+        if (isCurrentDay) initialPage = +day;
 
         lessonsForDayOfWeek.forEach((lessonItem, key) => {
           const startLesson = moment(lessonItem.schedule.startTime).format('LT');
           const endLesson = moment(lessonItem.schedule.endTime).format('LT');
 
+          const isCurrentLesson = moment(moment(new Date()).format('hh:mm'), 'hh:mm').isBetween(
+            moment(moment(lessonItem.schedule.startTime).format('hh:mm'), 'hh:mm'),
+            moment(moment(lessonItem.schedule.endTime).format('hh:mm'), 'hh:mm')
+          );
+
           weekLessons.push(
-            <Card style={styles.card} key={key}>
+            <Card style={(isCurrentDay && isCurrentLesson) ? styles.activeCard : styles.card} key={key}>
               <CardItem>
                 <Body style={styles.cardItemHours}>
                   <Text>

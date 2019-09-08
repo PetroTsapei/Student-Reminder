@@ -16,6 +16,12 @@ const ios = StyleSheet.create({
     marginRight: 10,
     marginBottom: 5
   },
+  activeCard: {
+    marginLeft: 10,
+    marginRight: 10,
+    marginBottom: 5,
+    borderColor: 'red'
+  },
   cardItemHours: {
     alignItems: 'center'
   },
