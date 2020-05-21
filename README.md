@@ -1,1 +1,1 @@
-PDP for COAX Software
+Project example
