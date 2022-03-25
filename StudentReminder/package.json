@@ -8,7 +8,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
-    "electron": "^5.0.7",
+    "electron": "^13.6.6",
     "expo": "^33.0.0",
     "expo-permissions": "^5.0.1",
     "libphonenumber-js": "^1.7.20",
